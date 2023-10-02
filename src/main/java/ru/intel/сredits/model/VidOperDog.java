@@ -1,22 +1,35 @@
-package ru.intel.credits.model;
+package ru.intel.сredits.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class VidOperDog {
+
+    public static final Map<String, String> COLUMN_MAPPING = Map.of(
+            "id", "id",
+            "code", "code",
+            "collectionDebts", "collectionDebts",
+            "vidDebt", "vidDebt",
+            "vidDebtDt", "vidDebtDt"
+    );
+
     int id;
     String code;
+    int collectionDebts;
     int vidDebt;
     int vidDebtDt;
-    ArrayList<HashMap<Integer, String>> takeDebt;
+    ArrayList<HashMap<Integer, String>> debets;
 
-    public VidOperDog(int id, String code, int vidDebt, int vidDebtDt, ArrayList<HashMap<Integer, String>> takeDebt) {
+    public VidOperDog(int id, String code, int collectionDebts, int vidDebt, int vidDebtDt,
+                      ArrayList<HashMap<Integer, String>> debets) {
         this.id = id;
         this.code = code;
+        this.collectionDebts = collectionDebts;
         this.vidDebt = vidDebt;
         this.vidDebtDt = vidDebtDt;
-        this.takeDebt = takeDebt;
+        this.debets = debets;
     }
 
     public void setId(int id) {
@@ -35,10 +48,6 @@ public class VidOperDog {
         this.vidDebtDt = vidDebtDt;
     }
 
-    public void setTakeDebt(ArrayList<HashMap<Integer, String>> takeDebt) {
-        this.takeDebt = takeDebt;
-    }
-
     public int getId() {
         return id;
     }
@@ -55,8 +64,20 @@ public class VidOperDog {
         return vidDebtDt;
     }
 
-    public ArrayList<HashMap<Integer, String>> getTakeDebt() {
-        return takeDebt;
+    public int getCollectionDebts() {
+        return collectionDebts;
+    }
+
+    public void setCollectionDebts(int collectionDebts) {
+        this.collectionDebts = collectionDebts;
+    }
+
+    public ArrayList<HashMap<Integer, String>> getDebets() {
+        return debets;
+    }
+
+    public void setDebets(ArrayList<HashMap<Integer, String>> debets) {
+        this.debets = debets;
     }
 
     @Override

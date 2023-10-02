@@ -1,21 +1,34 @@
-package ru.intel.credits.model;
+package ru.intel.сredits.model;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Objects;
 
-public class PlanOper {
+public class FactOper {
+
+    public static final Map<String, String> COLUMN_MAPPING = Map.of(
+            "date", "date",
+            "summa", "summa",
+            "oper", "oper",
+            "vidDebt", "vidDebt",
+            "vidDebtDt", "vidDebtDt",
+            "collectionId", "collectionId"
+    );
+
     LocalDate date;
     float summa;
     int oper;
     int vidDebt;
     int vidDebtDt;
+    int collectionId;
 
-    public PlanOper(LocalDate date, float summa, int oper, int vidDebt, int vidDebtDt) {
+    public FactOper(LocalDate date, float summa, int oper, int vidDebt, int vidDebtDt, int collectionId) {
         this.date = date;
         this.summa = summa;
         this.oper = oper;
         this.vidDebt = vidDebt;
         this.vidDebtDt = vidDebtDt;
+        this.collectionId = collectionId;
     }
 
     public LocalDate getDate() {
@@ -58,11 +71,19 @@ public class PlanOper {
         this.vidDebtDt = vidDebtDt;
     }
 
+    public int getCollectionId() {
+        return collectionId;
+    }
+
+    public void setCollectionId(int collectionId) {
+        this.collectionId = collectionId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PlanOper planOper)) return false;
-        return Float.compare(planOper.summa, summa) == 0 && oper == planOper.oper && Objects.equals(date, planOper.date);
+        if (!(o instanceof FactOper factOper)) return false;
+        return Float.compare(factOper.summa, summa) == 0 && oper == factOper.oper && Objects.equals(date, factOper.date);
     }
 
     @Override

@@ -1,23 +1,43 @@
-package ru.intel.credits.model;
+package ru.intel.сredits.model;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 public class PrCred {
+
+    public static final Map<String, String> COLUMN_MAPPING = Map.of(
+            "numDog", "numDog",
+            "val", "val",
+            "collectionFO", "collectionFO",
+            "collectionPO", "collectionPO"
+    );
+
     String numDog;
     String val;
     int collectionFO;
     int collectionPO;
     ArrayList<FactOper> listFO;
-    ArrayList<FactOper> listPO;
+    ArrayList<PlanOper> listPO;
+    int collectionDebts;
 
-    public PrCred(String numDog, String val, int collectionFO, int collectionPO, ArrayList<FactOper> listFO, ArrayList<FactOper> listPO) {
+    public PrCred(String numDog, String val, int collectionFO, int collectionPO, ArrayList<FactOper> listFO,
+                  ArrayList<PlanOper> listPO, int collectionDebts) {
         this.numDog = numDog;
         this.val = val;
         this.collectionFO = collectionFO;
         this.collectionPO = collectionPO;
         this.listFO = listFO;
         this.listPO = listPO;
+        this.collectionDebts = collectionDebts;
+    }
+
+    public int getCollectionDebts() {
+        return collectionDebts;
+    }
+
+    public void setCollectionDebts(int collectionDebts) {
+        this.collectionDebts = collectionDebts;
     }
 
     public int getCollectionFO() {
@@ -60,11 +80,11 @@ public class PrCred {
         this.listFO = listFO;
     }
 
-    public ArrayList<FactOper> getListPO() {
+    public ArrayList<PlanOper> getListPO() {
         return listPO;
     }
 
-    public void setListPO(ArrayList<FactOper> listPO) {
+    public void setListPO(ArrayList<PlanOper> listPO) {
         this.listPO = listPO;
     }
 

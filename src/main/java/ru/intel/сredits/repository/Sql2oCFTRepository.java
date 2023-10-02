@@ -1,4 +1,4 @@
-package ru.intel.cft_creds.repository;
+package ru.intel.сredits.repository;
 
 import org.sql2o.Sql2o;
 

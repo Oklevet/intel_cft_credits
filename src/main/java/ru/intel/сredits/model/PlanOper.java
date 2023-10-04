@@ -15,12 +15,12 @@ public class PlanOper {
             "collectionId", "collectionId"
     );
 
-    LocalDate date;
-    float summa;
-    int oper;
-    int vidDebt;
-    int vidDebtDt;
-    int collectionId;
+    private LocalDate date;
+    private float summa;
+    private int oper;
+    private int vidDebt;
+    private int vidDebtDt;
+    private int collectionId;
 
     public PlanOper(LocalDate date, float summa, int oper, int vidDebt, int vidDebtDt, int collectionId) {
         this.date = date;

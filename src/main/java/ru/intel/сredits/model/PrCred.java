@@ -13,13 +13,13 @@ public class PrCred {
             "collectionPO", "collectionPO"
     );
 
-    String numDog;
-    String val;
-    int collectionFO;
-    int collectionPO;
-    ArrayList<FactOper> listFO;
-    ArrayList<PlanOper> listPO;
-    int collectionDebts;
+    private String numDog;
+    private String val;
+    private int collectionFO;
+    private int collectionPO;
+    private ArrayList<FactOper> listFO;
+    private ArrayList<PlanOper> listPO;
+    private int collectionDebts;
 
     public PrCred(String numDog, String val, int collectionFO, int collectionPO, ArrayList<FactOper> listFO,
                   ArrayList<PlanOper> listPO, int collectionDebts) {

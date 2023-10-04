@@ -7,15 +7,26 @@ public class VidDebt {
 
     public static final Map<String, String> COLUMN_MAPPING = Map.of(
             "int", "int",
-            "code", "code"
+            "code", "code",
+            "typeDebt", "typeDebt"
     );
 
-    int id;
-    String code;
+    private int id;
+    private String code;
+    private String typeDebt;
 
-    public VidDebt(int id, String code) {
+    public VidDebt(int id, String code, String typeDebt) {
         this.id = id;
         this.code = code;
+        this.typeDebt = typeDebt;
+    }
+
+    public String getTypeDebt() {
+        return typeDebt;
+    }
+
+    public void setTypeDebt(String typeDebt) {
+        this.typeDebt = typeDebt;
     }
 
     public int getId() {

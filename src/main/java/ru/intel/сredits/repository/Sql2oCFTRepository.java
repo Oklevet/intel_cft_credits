@@ -26,29 +26,25 @@ public class Sql2oCFTRepository implements CFTRepository {
     }
 
     @Override
-    public HashMap<Integer, String> getAllVidDebts() {
-        HashMap<Integer, String> debts = new HashMap<>();
+    public HashMap<Integer, VidDebt> getAllVidDebts() {
+        var debts = new HashMap<Integer, VidDebt>();
         try (var connection = sql2o.open()) {
             var query = connection.createQuery("select id, code from VID_DEBT");
             query.setColumnMappings(VidDebt.COLUMN_MAPPING)
                     .executeAndFetch(VidDebt.class)
                     .stream()
-                    .map(x -> debts.putIfAbsent(x.getId(), x.getCode()));
+                    .map(x -> debts.putIfAbsent(x.getId(), x));
             return debts;
         }
     }
 
     @Override
-    public HashMap<Integer, VidOperDog> getAllVidOperDogs() {
+    public Collection<VidOperDog> getAllVidOperDogs() {
         HashMap<Integer, VidOperDog> opers = new HashMap<>();
         try (var connection = sql2o.open()) {
             var query = connection.createQuery("select id, code, take_debt, vid_debt, vid_debt_dt " +
                     "from VID_OPER_DOG");
-            query.setColumnMappings(VidOperDog.COLUMN_MAPPING)
-                    .executeAndFetch(VidOperDog.class)
-                    .stream()
-                    .map(x -> opers.putIfAbsent(x.getId(), x));
-            return opers;
+            return query.setColumnMappings(VidOperDog.COLUMN_MAPPING).executeAndFetch(VidOperDog.class);
         }
     }
 

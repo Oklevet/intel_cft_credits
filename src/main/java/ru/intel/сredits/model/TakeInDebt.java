@@ -11,9 +11,9 @@ public class TakeInDebt {
             "collectionId", "collectionId"
     );
 
-    int debt;
-    boolean DT;
-    int collectionId;
+    private int debt;
+    private boolean DT;
+    private int collectionId;
 
     public TakeInDebt(int debt, boolean DT, int collectionId) {
         this.debt = debt;

@@ -15,15 +15,15 @@ public class VidOperDog {
             "vidDebtDt", "vidDebtDt"
     );
 
-    int id;
-    String code;
-    int collectionDebts;
-    int vidDebt;
-    int vidDebtDt;
-    ArrayList<HashMap<Integer, String>> debets;
+    private int id;
+    private String code;
+    private int collectionDebts;
+    private int vidDebt;
+    private int vidDebtDt;
+    private ArrayList<TakeInDebt> debets;
 
     public VidOperDog(int id, String code, int collectionDebts, int vidDebt, int vidDebtDt,
-                      ArrayList<HashMap<Integer, String>> debets) {
+                      ArrayList<TakeInDebt> debets) {
         this.id = id;
         this.code = code;
         this.collectionDebts = collectionDebts;
@@ -72,11 +72,11 @@ public class VidOperDog {
         this.collectionDebts = collectionDebts;
     }
 
-    public ArrayList<HashMap<Integer, String>> getDebets() {
+    public ArrayList<TakeInDebt> getDebets() {
         return debets;
     }
 
-    public void setDebets(ArrayList<HashMap<Integer, String>> debets) {
+    public void setDebets(ArrayList<TakeInDebt> debets) {
         this.debets = debets;
     }
 

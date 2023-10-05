@@ -3,14 +3,13 @@ package ru.intel.сredits.calc;
 import ru.intel.сredits.calc.debtsByCred.CalcComissDebt;
 import ru.intel.сredits.calc.debtsByCred.CalcPrcDebt;
 import ru.intel.сredits.calc.debtsByCred.CalcSimpleDebt;
-import ru.intel.сredits.model.Debt;
-import ru.intel.сredits.model.PrCred;
-import ru.intel.сredits.model.VidDebt;
-import ru.intel.сredits.model.VidOperDog;
+import ru.intel.сredits.model.*;
 import ru.intel.сredits.repository.FillCollections;
 import ru.intel.сredits.repository.Sql2oCFTRepository;
 
 import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class CalcAllDebts {
 
@@ -47,9 +46,9 @@ public class CalcAllDebts {
      * Получение пачки кредитов по которой будет выполняться расчет задолженностей
      * @return
      */
-    public Collection<PrCred> loadNewCredsPool() {
+    public Collection<PrCred> loadNewCredsPool(List<Integer> listId) {
         creds.clear();
-        creds = sql2oCFT.getAllCreds();
+        creds = sql2oCFT.getAllCreds(listId);
         creds = fillCollections.fillFOInCreds(creds, sql2oCFT.getAllFOByCreds());
         creds = fillCollections.fillPOInCreds(creds, sql2oCFT.getAllPOByCreds());
         return creds;
@@ -73,9 +72,10 @@ public class CalcAllDebts {
         });
     }
 
-    public List<Debt> credPoolCalc(Collection<PrCred> creds) {
-        var debts = new ArrayList<Debt>();
+    public CredDebtTtansfer credPoolCalc(Collection<PrCred> creds) {
+        var credDebt = new CredDebtTtansfer(new ArrayList<PrCred>(), new ArrayList<Debt>());
         for (PrCred cred : creds) {
+            credDebt.getCreds().add(cred);
             getCredDebts(cred);
             for (Integer debt : debtsOfCred) {
                 double summa = 0;
@@ -85,9 +85,28 @@ public class CalcAllDebts {
                     case "Комиссионная" -> summa += calcComissDebt.calcComissDebt(cred, opers, debt);
                     case "Налог" -> summa += 0;
                 }
-                debts.add(new Debt(cred.getCollectionDebts(), debt, summa));
+                credDebt.getDebts().add(new Debt(cred.getCollectionDebts(), debt, summa));
             }
         }
-        return debts;
+        return credDebt;
+    }
+
+    public static <Integer> Stream<List<Integer>> batchesOfList(List<Integer> source, int length) {
+        if (length <= 0)
+            return null;
+        int size = source.size();
+        if (size <= 0)
+            return Stream.empty();
+        int fullChunks = (size - 1) / length;
+        return IntStream.range(0, fullChunks + 1).mapToObj(
+                n -> source.subList(n * length, n == fullChunks ? size : (n + 1) * length));
+    }
+
+    public List<CredDebtTtansfer> calcAllCredsByPools(CalcAllDebts calcAllDebts, int batch) {
+        var listCredId = sql2oCFT.getIDAllCreds();
+        var credDebt = new ArrayList<CredDebtTtansfer>();
+        batchesOfList(listCredId, batch).map(x ->
+                credDebt.add(calcAllDebts.credPoolCalc(calcAllDebts.loadNewCredsPool(x))));
+        return credDebt;
     }
 }

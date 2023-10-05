@@ -36,8 +36,6 @@ public class Sql2oRecieveDBRepository implements RecieveDBRepository {
                 atomicInteger.addAndGet(query.executeUpdate().getResult());
                 return null;
             });
-            LOG.info("Кредитов передано на вставку: " + creds.size() + System.lineSeparator() + "Кредитов вставлено: " +
-                    atomicInteger.get());
             return atomicInteger.get();
         } catch (Exception e) {
             LOG.error("При вставке кредитов " + creds.toString() + " произошла ошибка: " + e.fillInStackTrace());
@@ -60,8 +58,6 @@ public class Sql2oRecieveDBRepository implements RecieveDBRepository {
                 atomicInteger.addAndGet(query.executeUpdate().getResult());
                 return null;
             });
-            LOG.info("Задолженностей передано на вставку: " + debts.size() + System.lineSeparator() + "Задолженностей" +
-                    " вставлено: " + atomicInteger.get());
             return atomicInteger.get();
         } catch (Exception e) {
             LOG.error("При вставке задолженностей " + debts.toString() + " произошла ошибка: " + e.fillInStackTrace());

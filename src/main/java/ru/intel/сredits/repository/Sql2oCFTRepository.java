@@ -5,6 +5,7 @@ import ru.intel.сredits.model.*;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class Sql2oCFTRepository implements CFTRepository {
 
@@ -15,12 +16,24 @@ public class Sql2oCFTRepository implements CFTRepository {
     }
 
     @Override
-    public Collection<PrCred> getAllCreds() {
+    public List<Integer> getIDAllCreds() {
         try (var connection = sql2o.open()) {
             var query = connection.createQuery("" +
-                    "select pr.NUM_DOG, pr.VAL, pr.LIST_PAY, pr.LIST_PLAN_PAY " +
+                    "select pr.id " +
                     "from  PR_CRED pr " +
                     "where pr.[STATE] = 'Открыт'");
+            return query.executeAndFetch(Integer.class);
+        }
+    }
+
+    @Override
+    public Collection<PrCred> getAllCreds(List<Integer> listId) {
+        try (var connection = sql2o.open()) {
+            var sql = """
+                    select pr.NUM_DOG, pr.VAL, pr.LIST_PAY, pr.LIST_PLAN_PAY " +
+                    "from   PR_CRED pr " +
+                    "where  pr.id in (:list);""";
+            var query = connection.createQuery(sql).addParameter("list", listId);
             return query.setColumnMappings(PrCred.COLUMN_MAPPING).executeAndFetch(PrCred.class);
         }
     }

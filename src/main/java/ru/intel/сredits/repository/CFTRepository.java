@@ -4,10 +4,13 @@ import ru.intel.сredits.model.*;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public interface CFTRepository {
 
-    Collection<PrCred> getAllCreds();
+    List<Integer> getIDAllCreds();
+
+    Collection<PrCred> getAllCreds(List<Integer> listId);
 
     HashMap<Integer, VidDebt> getAllVidDebts();
 

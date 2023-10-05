@@ -9,5 +9,5 @@ public interface RecieveDBRepository {
 
     Integer insertAllCreds(Collection<PrCred> creds);
 
-    Integer insertAllDebts(Collection<Debt> debts);
+    Integer insertAllDebts(Collection<Debt> debts, HashMap<Integer, VidDebt> dirDebts);
 }

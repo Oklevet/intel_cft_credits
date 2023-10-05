@@ -1,5 +1,6 @@
 package ru.intel.сredits.calc;
 
+import ru.intel.сredits.calc.debtsByCred.CalcComissDebt;
 import ru.intel.сredits.calc.debtsByCred.CalcPrcDebt;
 import ru.intel.сredits.calc.debtsByCred.CalcSimpleDebt;
 import ru.intel.сredits.model.Debt;
@@ -27,8 +28,10 @@ public class CalcAllDebts {
 
     CalcPrcDebt calcPrcDebt = new CalcPrcDebt();
     CalcSimpleDebt calcSimpleDebt = new CalcSimpleDebt();
+    CalcComissDebt calcComissDebt = new CalcComissDebt();
 
-    public CalcAllDebts() {
+    public CalcAllDebts(Sql2oCFTRepository sql2oCF) {
+        this.sql2oCFT = sql2oCF;
     }
 
     /**
@@ -42,12 +45,14 @@ public class CalcAllDebts {
 
     /**
      * Получение пачки кредитов по которой будет выполняться расчет задолженностей
+     * @return
      */
-    public void loadNewCredsPool() {
+    public Collection<PrCred> loadNewCredsPool() {
         creds.clear();
         creds = sql2oCFT.getAllCreds();
         creds = fillCollections.fillFOInCreds(creds, sql2oCFT.getAllFOByCreds());
         creds = fillCollections.fillPOInCreds(creds, sql2oCFT.getAllPOByCreds());
+        return creds;
     }
 
     public void getCredDebts(PrCred cred) {
@@ -77,8 +82,8 @@ public class CalcAllDebts {
                 switch (vidDebts.get(debt).getTypeDebt()) {
                     case "Простая" -> summa += calcSimpleDebt.calcSimpleDebt(cred, opers, debt);
                     case "Процентная" -> summa += calcPrcDebt.calcPrcDebt(cred, opers, debt);
-                    case "Комиссионная" -> summa += 0;
-                    case "Налоговая" -> summa += 0;
+                    case "Комиссионная" -> summa += calcComissDebt.calcComissDebt(cred, opers, debt);
+                    case "Налог" -> summa += 0;
                 }
                 debts.add(new Debt(cred.getCollectionDebts(), debt, summa));
             }

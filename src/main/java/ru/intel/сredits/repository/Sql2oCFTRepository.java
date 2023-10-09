@@ -1,11 +1,16 @@
 package ru.intel.сredits.repository;
 
+import org.sql2o.ResultSetHandlerFactoryBuilder;
 import org.sql2o.Sql2o;
 import ru.intel.сredits.model.*;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Sql2oCFTRepository implements CFTRepository {
 
@@ -20,19 +25,18 @@ public class Sql2oCFTRepository implements CFTRepository {
         try (var connection = sql2o.open()) {
             var query = connection.createQuery("" +
                     "select pr.id " +
-                    "from  PR_CRED pr " +
-                    "where pr.[STATE] = 'Открыт'");
-            return query.executeAndFetch(Integer.class);
+                    "from  intel_cft_credits.PR_CRED pr " +
+                    "where pr.STATE = 'Открыт'");
+            return query.executeScalarList(Integer.class);
         }
     }
 
     @Override
     public Collection<PrCred> getAllCreds(List<Integer> listId) {
         try (var connection = sql2o.open()) {
-            var sql = """
-                    select pr.NUM_DOG, pr.VAL, pr.LIST_PAY, pr.LIST_PLAN_PAY " +
-                    "from   PR_CRED pr " +
-                    "where  pr.id in (:list);""";
+            var sql = "select  pr.NUM_DOG, pr.VAL, pr.LIST_PAY, pr.LIST_PLAN_PAY " +
+                    "from   intel_cft_credits.PR_CRED pr " +
+                    "where  pr.id in (:list);";
             var query = connection.createQuery(sql).addParameter("list", listId);
             return query.setColumnMappings(PrCred.COLUMN_MAPPING).executeAndFetch(PrCred.class);
         }
@@ -42,22 +46,24 @@ public class Sql2oCFTRepository implements CFTRepository {
     public HashMap<Integer, VidDebt> getAllVidDebts() {
         var debts = new HashMap<Integer, VidDebt>();
         try (var connection = sql2o.open()) {
-            var query = connection.createQuery("select id, code from VID_DEBT");
-            query.setColumnMappings(VidDebt.COLUMN_MAPPING)
-                    .executeAndFetch(VidDebt.class)
-                    .stream()
-                    .map(x -> debts.putIfAbsent(x.getId(), x));
+            var query = connection.createQuery("select id, code from intel_cft_credits.VID_DEBT");
+            var debtsList = query.setColumnMappings(VidDebt.COLUMN_MAPPING)
+                    .executeAndFetch(VidDebt.class);
+            debtsList.forEach(x -> debts.put(x.getId(), x));
             return debts;
         }
     }
 
     @Override
     public Collection<VidOperDog> getAllVidOperDogs() {
-        HashMap<Integer, VidOperDog> opers = new HashMap<>();
+        //HashMap<Integer, VidOperDog> opers = new HashMap<>();
         try (var connection = sql2o.open()) {
             var query = connection.createQuery("select id, code, take_debt, vid_debt, vid_debt_dt " +
-                    "from VID_OPER_DOG");
-            return query.setColumnMappings(VidOperDog.COLUMN_MAPPING).executeAndFetch(VidOperDog.class);
+                    "from intel_cft_credits.VID_OPER_DOG");
+            var opers = query.setColumnMappings(VidOperDog.COLUMN_MAPPING)
+                                            .executeAndFetch(VidOperDog.class);
+            opers.forEach(x -> x.setDebets(new ArrayList<>()));
+            return opers;
         }
     }
 
@@ -66,12 +72,12 @@ public class Sql2oCFTRepository implements CFTRepository {
         try (var connection = sql2o.open()) {
             var query = connection.createQuery("" +
                     "select fo.DATE, fo.SUMMA, fo.OPER, fo.VID_DEBT, fo.VID_DEBT_DT, fo.collection_id " +
-                    "from FACT_OPER fo " +
+                    "from intel_cft_credits.FACT_OPER fo " +
                     "where fo.collection_id in (" +
                             "select pr.id " +
-                            "from  PR_CRED pr " +
-                            "where pr.[STATE] = 'Открыт') " +
-                    "and fo.[DATE] < sysdate + 1");
+                            "from   intel_cft_credits.PR_CRED pr " +
+                            "where  pr.STATE = 'Открыт') " +
+                    "and fo.DATE < sysdate + 1");
             return query.setColumnMappings(FactOper.COLUMN_MAPPING).executeAndFetch(FactOper.class);
         }
     }
@@ -81,12 +87,12 @@ public class Sql2oCFTRepository implements CFTRepository {
         try (var connection = sql2o.open()) {
             var query = connection.createQuery("" +
                     "select po.DATE, po.SUMMA, po.OPER, po.VID_DEBT, po.VID_DEBT_DT, po.collection_id " +
-                    "from PLAN_OPER po " +
+                    "from intel_cft_credits.PLAN_OPER po " +
                     "where po.collection_id in (" +
                             "select pr.id " +
-                            "from  PR_CRED pr " +
-                            "where pr.[STATE] = 'Открыт') " +
-                    "and po.[DATE] < sysdate + 1");
+                            "from   intel_cft_credits.PR_CRED pr " +
+                            "where  pr.STATE = 'Открыт') " +
+                    "and po.DATE < sysdate + 1");
             return query.setColumnMappings(PlanOper.COLUMN_MAPPING).executeAndFetch(PlanOper.class);
         }
     }
@@ -95,12 +101,13 @@ public class Sql2oCFTRepository implements CFTRepository {
     public Collection<TakeInDebt> getAllTakeInDebt() {
         try (var connection = sql2o.open()) {
             var query = connection.createQuery("" +
-                    "select d.debt, d.DT, d.collectionId " +
-                    "from TAKE_IN_DEBT d " +
-                    "where po.collection_id in (" +
-                            "select v.id " +
-                            "from  VID_OPER_DOG v) ");
-            return query.setColumnMappings(TakeInDebt.COLUMN_MAPPING).executeAndFetch(TakeInDebt.class);
+                    "select d.debt, d.DT, d.collection_id " +
+                    "from intel_cft_credits.TAKE_IN_DEBT d " +
+                    "where d.collection_id in (" +
+                            "select v.TAKE_DEBT " +
+                            "from   intel_cft_credits.VID_OPER_DOG v) ");
+            return query.setColumnMappings(TakeInDebt.COLUMN_MAPPING)
+                    .executeAndFetch(TakeInDebt.class);
         }
     }
 }

@@ -1,18 +1,15 @@
 package ru.intel.сredits.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class VidOperDog {
 
     public static final Map<String, String> COLUMN_MAPPING = Map.of(
             "id", "id",
             "code", "code",
-            "collectionDebts", "collectionDebts",
-            "vidDebt", "vidDebt",
-            "vidDebtDt", "vidDebtDt"
+            "take_debt", "collectionDebts",
+            "vid_debt", "vidDebt",
+            "vid_debt_dt", "vidDebtDt"
     );
 
     private int id;
@@ -90,5 +87,15 @@ public class VidOperDog {
     @Override
     public int hashCode() {
         return Objects.hash(id, code);
+    }
+
+    @Override
+    public String toString() {
+        StringJoiner sj = new StringJoiner(", ");
+        debets.forEach(x -> sj.add(x.toString()));
+        return "VidOperDog{" +
+                "code='" + code + '\'' +
+                ", debets=" + sj +
+                '}';
     }
 }

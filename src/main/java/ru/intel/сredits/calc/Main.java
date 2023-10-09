@@ -18,12 +18,12 @@ public class Main {
     Sql2oCFTRepository sql2oCftRepos;
 
     Sql2oRecieveDBRepository sql2oRecieveDBRepository;
+    static Main main = new Main();
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public void calcAndTransferCreds(int batch) {
 
-        var main = new Main();
         main.connectToCFT();
         main.connectToRecieveDB();
 
@@ -88,6 +88,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
+        main.calcAndTransferCreds(5);
     }
 }

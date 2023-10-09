@@ -32,8 +32,9 @@ public class Sql2oRecieveDBRepository implements RecieveDBRepository {
             creds.stream().map(x -> {
                 var query = connection.createQuery(sql, true)
                         .addParameter("NUM_DOG", x.getNumDog())
-                        .addParameter("DEBTS", x.getCollectionDebts());
-                atomicInteger.addAndGet(query.executeUpdate().getResult());
+                        .addParameter("DEBTS", x.getCollectionDebts())
+                        .addToBatch();
+                atomicInteger.addAndGet(query.executeBatch().getResult());
                 return null;
             });
             return atomicInteger.get();
@@ -54,8 +55,9 @@ public class Sql2oRecieveDBRepository implements RecieveDBRepository {
                 var query = connection.createQuery(sql, true)
                         .addParameter("CODE", dirDebts.get(x.getId()).getCode())
                         .addParameter("SUMMA", x.getSumma())
-                        .addParameter("collection_id", x.getCollectionId());
-                atomicInteger.addAndGet(query.executeUpdate().getResult());
+                        .addParameter("collection_id", x.getCollectionId())
+                        .addToBatch();
+                atomicInteger.addAndGet(query.executeBatch().getResult());
                 return null;
             });
             return atomicInteger.get();

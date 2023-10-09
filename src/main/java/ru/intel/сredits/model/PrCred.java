@@ -7,10 +7,10 @@ import java.util.Objects;
 public class PrCred {
 
     public static final Map<String, String> COLUMN_MAPPING = Map.of(
-            "numDog", "numDog",
+            "NUM_DOG", "numDog",
             "val", "val",
-            "collectionFO", "collectionFO",
-            "collectionPO", "collectionPO"
+            "LIST_PAY", "collectionFO",
+            "LIST_PLAN_PAY", "collectionPO"
     );
 
     private String numDog;

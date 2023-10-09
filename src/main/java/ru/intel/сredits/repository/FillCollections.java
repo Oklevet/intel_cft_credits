@@ -47,10 +47,12 @@ public class FillCollections implements FillCollectionOfModel {
 
     public HashMap<Integer, VidOperDog> fillOperDebets(Collection<VidOperDog> opers, Collection<TakeInDebt> debets) {
         HashMap<Integer, VidOperDog> opersMap = new HashMap<>();
+
         debets.stream()
-                .map(x-> Objects.requireNonNull(getVidOperByIdDebets(opers, x.getCollectionId())).getDebets().add(x));
-        opers.stream()
-                .map(x -> opersMap.putIfAbsent(x.getId(), x));
+                .filter(x-> getVidOperByIdDebets(opers, x.getCollectionId()) != null)
+                .forEach(t-> getVidOperByIdDebets(opers, t.getCollectionId()).getDebets().add(t));
+
+        opers.forEach(x -> opersMap.put(x.getId(), x));
         return opersMap;
     }
 }

@@ -19,14 +19,16 @@ public class CalcAllDebts {
 
     Sql2oCFTRepository sql2oCFT;
 
-    FillCollections fillCollections;
-
     Collection<PrCred> creds;
 
     HashSet<Integer> debtsOfCred;
 
+    FillCollections fillCollections = new FillCollections();
+
     CalcPrcDebt calcPrcDebt = new CalcPrcDebt();
+
     CalcSimpleDebt calcSimpleDebt = new CalcSimpleDebt();
+
     CalcComissDebt calcComissDebt = new CalcComissDebt();
 
     public CalcAllDebts(Sql2oCFTRepository sql2oCF) {
@@ -47,7 +49,9 @@ public class CalcAllDebts {
      * @return
      */
     public Collection<PrCred> loadNewCredsPool(List<Integer> listId) {
-        creds.clear();
+        if (creds != null) {
+            creds.clear();
+        }
         creds = sql2oCFT.getAllCreds(listId);
         creds = fillCollections.fillFOInCreds(creds, sql2oCFT.getAllFOByCreds());
         creds = fillCollections.fillPOInCreds(creds, sql2oCFT.getAllPOByCreds());
@@ -92,8 +96,10 @@ public class CalcAllDebts {
     }
 
     public static <Integer> Stream<List<Integer>> batchesOfList(List<Integer> source, int length) {
-        if (length <= 0)
+        if (length <= 0) {
             return null;
+        }
+
         int size = source.size();
         if (size <= 0)
             return Stream.empty();
@@ -105,8 +111,13 @@ public class CalcAllDebts {
     public List<CredDebtTtansfer> calcAllCredsByPools(CalcAllDebts calcAllDebts, int batch) {
         var listCredId = sql2oCFT.getIDAllCreds();
         var credDebt = new ArrayList<CredDebtTtansfer>();
-        batchesOfList(listCredId, batch).map(x ->
+        Objects.requireNonNull(batchesOfList(listCredId, batch)).forEach(x ->
                 credDebt.add(calcAllDebts.credPoolCalc(calcAllDebts.loadNewCredsPool(x))));
+
+        System.out.println("...");
+        credDebt.forEach(x -> x.getCreds().forEach(Object::toString));
+        System.out.println("...");
+
         return credDebt;
     }
 }

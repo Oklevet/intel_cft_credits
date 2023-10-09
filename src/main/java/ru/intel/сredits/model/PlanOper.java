@@ -10,9 +10,9 @@ public class PlanOper {
             "date", "date",
             "summa", "summa",
             "oper", "oper",
-            "vidDebt", "vidDebt",
-            "vidDebtDt", "vidDebtDt",
-            "collectionId", "collectionId"
+            "VID_DEBT", "vidDebt",
+            "VID_DEBT_DT", "vidDebtDt",
+            "collection_id", "collectionId"
     );
 
     private LocalDate date;

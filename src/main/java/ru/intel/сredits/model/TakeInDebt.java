@@ -8,7 +8,7 @@ public class TakeInDebt {
     public static final Map<String, String> COLUMN_MAPPING = Map.of(
             "debt", "debt",
             "DT", "DT",
-            "collectionId", "collectionId"
+            "collection_id", "collectionId"
     );
 
     private int debt;
@@ -47,8 +47,13 @@ public class TakeInDebt {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         TakeInDebt that = (TakeInDebt) o;
         return debt == that.debt && collectionId == that.collectionId;
     }

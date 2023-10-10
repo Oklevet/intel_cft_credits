@@ -7,7 +7,9 @@ import java.util.HashMap;
 
 public interface RecieveDBRepository {
 
-    Integer insertAllCreds(Collection<PrCred> creds);
+    void insertAllCreds(Collection<PrCred> creds);
 
-    Integer insertAllDebts(Collection<Debt> debts, HashMap<Integer, VidDebt> dirDebts);
+    void insertAllDebts(Collection<Debt> debts, HashMap<Integer, VidDebt> dirDebts);
+
+    Integer getSequence(int count);
 }

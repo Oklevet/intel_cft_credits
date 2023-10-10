@@ -6,22 +6,26 @@ import ru.intel.сredits.calc.debtsByCred.CalcSimpleDebt;
 import ru.intel.сredits.model.*;
 import ru.intel.сredits.repository.FillCollections;
 import ru.intel.сredits.repository.Sql2oCFTRepository;
+import ru.intel.сredits.repository.Sql2oRecieveDBRepository;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class CalcAllDebts {
 
-    HashMap<Integer, VidDebt> vidDebts;
+    HashMap<Integer, VidDebt> vidDebts = new HashMap<>();
 
     HashMap<Integer, VidOperDog> opers;
 
     Sql2oCFTRepository sql2oCFT;
 
+    Sql2oRecieveDBRepository sql2oRecieveDB;
+
     Collection<PrCred> creds;
 
-    HashSet<Integer> debtsOfCred;
+    HashSet<Integer> debtsOfCred = new HashSet<>();
 
     FillCollections fillCollections = new FillCollections();
 
@@ -31,8 +35,9 @@ public class CalcAllDebts {
 
     CalcComissDebt calcComissDebt = new CalcComissDebt();
 
-    public CalcAllDebts(Sql2oCFTRepository sql2oCF) {
-        this.sql2oCFT = sql2oCF;
+    public CalcAllDebts(Sql2oCFTRepository sql2oCFT, Sql2oRecieveDBRepository sql2oRecieveDB) {
+        this.sql2oCFT = sql2oCFT;
+        this.sql2oRecieveDB = sql2oRecieveDB;
     }
 
     /**
@@ -52,28 +57,40 @@ public class CalcAllDebts {
         if (creds != null) {
             creds.clear();
         }
+
+        AtomicInteger sequence = new AtomicInteger(sql2oRecieveDB.getSequence(listId.size()));
+
         creds = sql2oCFT.getAllCreds(listId);
+        creds.forEach(x -> {
+            x.setListFO(new ArrayList<>());
+            x.setListPO(new ArrayList<>());
+            x.setCollectionDebts(sequence.getAndIncrement());
+        });
+
         creds = fillCollections.fillFOInCreds(creds, sql2oCFT.getAllFOByCreds());
         creds = fillCollections.fillPOInCreds(creds, sql2oCFT.getAllPOByCreds());
+
         return creds;
     }
 
     public void getCredDebts(PrCred cred) {
-        debtsOfCred.clear();
+        if (debtsOfCred != null) {
+            debtsOfCred.clear();
+        }
 
-        cred.getListFO().stream().map(x -> {
+        cred.getListFO().forEach(x -> {
             debtsOfCred.add(x.getVidDebt());
             debtsOfCred.add(x.getVidDebtDt());
             opers.get(x.getOper()).getDebets().forEach(d -> debtsOfCred.add(d.getDebt()));
-            return null;
         });
 
-        cred.getListPO().stream().map(x -> {
+        cred.getListPO().forEach(x -> {
             debtsOfCred.add(x.getVidDebt());
             debtsOfCred.add(x.getVidDebtDt());
             opers.get(x.getOper()).getDebets().forEach(d -> debtsOfCred.add(d.getDebt()));
-            return null;
         });
+
+        debtsOfCred.remove(0);
     }
 
     public CredDebtTtansfer credPoolCalc(Collection<PrCred> creds) {
@@ -81,6 +98,7 @@ public class CalcAllDebts {
         for (PrCred cred : creds) {
             credDebt.getCreds().add(cred);
             getCredDebts(cred);
+
             for (Integer debt : debtsOfCred) {
                 double summa = 0;
                 switch (vidDebts.get(debt).getTypeDebt()) {
@@ -111,13 +129,8 @@ public class CalcAllDebts {
     public List<CredDebtTtansfer> calcAllCredsByPools(CalcAllDebts calcAllDebts, int batch) {
         var listCredId = sql2oCFT.getIDAllCreds();
         var credDebt = new ArrayList<CredDebtTtansfer>();
-        Objects.requireNonNull(batchesOfList(listCredId, batch)).forEach(x ->
+        batchesOfList(listCredId, batch).forEach(x ->
                 credDebt.add(calcAllDebts.credPoolCalc(calcAllDebts.loadNewCredsPool(x))));
-
-        System.out.println("...");
-        credDebt.forEach(x -> x.getCreds().forEach(Object::toString));
-        System.out.println("...");
-
         return credDebt;
     }
 }

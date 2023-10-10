@@ -7,23 +7,21 @@ import java.util.Objects;
 public class FactOper {
 
     public static final Map<String, String> COLUMN_MAPPING = Map.of(
-            "date", "date",
             "summa", "summa",
             "oper", "oper",
-            "VID_DEBT", "vidDebt",
-            "VID_DEBT_DT", "vidDebtDt",
+            "vid_debt", "vidDebt",
+            "vid_debt_dt", "vidDebtDt",
             "collection_id", "collectionId"
     );
 
     private LocalDate date;
-    private float summa;
+    private double summa;
     private int oper;
     private int vidDebt;
     private int vidDebtDt;
     private int collectionId;
 
-    public FactOper(LocalDate date, float summa, int oper, int vidDebt, int vidDebtDt, int collectionId) {
-        this.date = date;
+    public FactOper(double summa, int oper, int vidDebt, int vidDebtDt, int collectionId) {
         this.summa = summa;
         this.oper = oper;
         this.vidDebt = vidDebt;
@@ -83,7 +81,7 @@ public class FactOper {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FactOper factOper)) return false;
-        return Float.compare(factOper.summa, summa) == 0 && oper == factOper.oper && Objects.equals(date, factOper.date);
+        return Double.compare(factOper.summa, summa) == 0 && oper == factOper.oper && Objects.equals(date, factOper.date);
     }
 
     @Override

@@ -1,7 +1,8 @@
 package ru.intel.сredits.calc.debtsByCred;
 
-import ru.intel.сredits.calc.CalcAllDebts;
+import ru.intel.сredits.model.FactOper;
 import ru.intel.сredits.model.PrCred;
+import ru.intel.сredits.model.TakeInDebt;
 import ru.intel.сredits.model.VidOperDog;
 
 import java.util.HashMap;
@@ -16,14 +17,14 @@ public class CalcSimpleDebt {
      * @return - сумма задолженности
      */
     public Double calcSimpleDebt(PrCred cred, HashMap<Integer, VidOperDog> opers, int idDebt) {
-        return cred.getListFO().stream()
-                .filter(x -> opers.get(x.getOper()).getDebets().contains(idDebt))
-                .map(x -> opers.get(x.getOper()).getDebets().stream()
-                                                            .filter(d -> d.getDebt() == idDebt)
-                                                            .findFirst()
-                                                            .get()
-                                                            .isDT() ? x.getSumma() * -1 : x.getSumma())
-                .mapToDouble(a -> a)
-                .sum();
-    };
+        double summa = 0;
+        for (FactOper fo : cred.getListFO()) {
+            for (TakeInDebt debet : opers.get(fo.getOper()).getDebets()) {
+                if (debet.getDebt() == idDebt) {
+                    summa += debet.isDT() ? fo.getSumma() * -1 : fo.getSumma();
+                }
+            }
+        }
+        return summa;
+    }
 }

@@ -4,7 +4,6 @@ import ru.intel.сredits.model.*;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class FillCollections implements FillCollectionOfModel {
 
@@ -27,12 +26,12 @@ public class FillCollections implements FillCollectionOfModel {
     }
 
     public Collection<PrCred> fillFOInCreds(Collection<PrCred> creds, Collection<FactOper> fo) {
-        fo.stream().map(x-> Objects.requireNonNull(getCredByIdFo(creds, x.getCollectionId())).getListFO().add(x));
+        fo.forEach(x-> getCredByIdFo(creds, x.getCollectionId()).getListFO().add(x));
         return creds;
     }
 
     public Collection<PrCred> fillPOInCreds(Collection<PrCred> creds, Collection<PlanOper> fo) {
-        fo.stream().map(x-> Objects.requireNonNull(getCredByIdPo(creds, x.getCollectionId())).getListPO().add(x));
+        fo.forEach(x-> getCredByIdPo(creds, x.getCollectionId()).getListPO().add(x));
         return creds;
     }
 

@@ -8,7 +8,7 @@ public class VidDebt {
     public static final Map<String, String> COLUMN_MAPPING = Map.of(
             "int", "int",
             "code", "code",
-            "typeDebt", "typeDebt"
+            "debt_type", "typeDebt"
     );
 
     private int id;

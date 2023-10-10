@@ -10,7 +10,7 @@ insert into VID_DEBT values  (nextval('serial'),'Кредит + просрочк
 insert into VID_DEBT values  (nextval('serial'),'Неучтенные проценты за кредит', 'НЕУЧТЕН_ПРОЦЕНТЫ', 'Процентная');
 insert into VID_DEBT values  (nextval('serial'),'Отложенные проценты', 'ОТЛОЖЕН_ПРОЦЕНТЫ', 'Простая');
 insert into VID_DEBT values  (nextval('serial'),'Погашено кредита', 'ПОГАШЕНО_КР', 'Простая');
-insert into VID_DEBT values  (nextval('serial'),'Погашено процентов', 'ПОГАШЕНО_ПР');
+insert into VID_DEBT values  (nextval('serial'),'Погашено процентов', 'ПОГАШЕНО_ПР', 'Простая');
 insert into VID_DEBT values  (nextval('serial'),'Погашено просроченного кредита', 'КРЕДИТ_ПР_ГАШ', 'Простая');
 insert into VID_DEBT values  (nextval('serial'),'Просроченная ссудная задолженность', 'ПРОСРОЧ_КРЕДИТ', 'Простая');
 insert into VID_DEBT values  (nextval('serial'),'Резерв', 'РЕЗЕРВ', 'Простая');

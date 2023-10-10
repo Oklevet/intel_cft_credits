@@ -10,6 +10,8 @@ import ru.intel.сredits.repository.Sql2oRecieveDBRepository;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -27,22 +29,19 @@ public class Main {
         main.connectToCFT();
         main.connectToRecieveDB();
 
-        var calcAllDebts = new CalcAllDebts(sql2oCftRepos);
+        var calcAllDebts = new CalcAllDebts(sql2oCftRepos, sql2oRecieveDBRepository);
         calcAllDebts.actualDirectories();
         var credDebt = calcAllDebts.calcAllCredsByPools(calcAllDebts, batch);
 
         var prCreds = new ArrayList<PrCred>();
         var debts = new ArrayList<Debt>();
-        credDebt.stream().map(x -> {
+        credDebt.forEach(x -> {
             prCreds.addAll(x.getCreds());
-            return debts.addAll(x.getDebts());
+            debts.addAll(x.getDebts());
         });
 
-        var insertedCreds = sql2oRecieveDBRepository.insertAllCreds(prCreds);
-        var insertedDebets = sql2oRecieveDBRepository.insertAllDebts(debts, calcAllDebts.vidDebts);
-
-        LOG.info("Кредитов вставлено: " + insertedCreds);
-        LOG.info("Задолженностей insertedDebets: " + insertedCreds);
+        sql2oRecieveDBRepository.insertAllCreds(prCreds);
+        sql2oRecieveDBRepository.insertAllDebts(debts, calcAllDebts.vidDebts);
     }
 
     public void connectToCFT() {

@@ -15,6 +15,7 @@ public class CalcPrcDebt {
      * Список параметров раширить, функционал написать.
      */
     public Double calcPrcDebt(PrCred cred, HashMap<Integer, VidOperDog> opers, int idDebt) {
-        return (double) 0 + calcPrcDebt(cred, opers, idDebt);
+        simpleDebt = new CalcSimpleDebt();
+        return (double) 0 + simpleDebt.calcSimpleDebt(cred, opers, idDebt);
     };
 }

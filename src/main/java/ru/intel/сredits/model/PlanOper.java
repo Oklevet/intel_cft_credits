@@ -7,7 +7,6 @@ import java.util.Objects;
 public class PlanOper {
 
     public static final Map<String, String> COLUMN_MAPPING = Map.of(
-            "date", "date",
             "summa", "summa",
             "oper", "oper",
             "VID_DEBT", "vidDebt",
@@ -16,14 +15,13 @@ public class PlanOper {
     );
 
     private LocalDate date;
-    private float summa;
+    private double summa;
     private int oper;
     private int vidDebt;
     private int vidDebtDt;
     private int collectionId;
 
-    public PlanOper(LocalDate date, float summa, int oper, int vidDebt, int vidDebtDt, int collectionId) {
-        this.date = date;
+    public PlanOper(double summa, int oper, int vidDebt, int vidDebtDt, int collectionId) {
         this.summa = summa;
         this.oper = oper;
         this.vidDebt = vidDebt;
@@ -39,7 +37,7 @@ public class PlanOper {
         this.date = date;
     }
 
-    public float getSumma() {
+    public double getSumma() {
         return summa;
     }
 
@@ -83,7 +81,7 @@ public class PlanOper {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PlanOper planOper)) return false;
-        return Float.compare(planOper.summa, summa) == 0 && oper == planOper.oper && Objects.equals(date, planOper.date);
+        return Double.compare(planOper.summa, summa) == 0 && oper == planOper.oper && Objects.equals(date, planOper.date);
     }
 
     @Override

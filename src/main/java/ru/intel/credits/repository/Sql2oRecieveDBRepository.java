@@ -1,25 +1,24 @@
-package ru.intel.сredits.repository;
+package ru.intel.credits.repository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Query;
 import org.sql2o.Sql2o;
-import ru.intel.сredits.model.*;
+import ru.intel.credits.model.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Sql2oRecieveDBRepository implements RecieveDBRepository {
 
     private final Sql2o sql2o;
+
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     public Sql2oRecieveDBRepository(Sql2o sql2o) {
         this.sql2o = sql2o;
     }
-
 
     @Override
     public void insertAllCreds(Collection<PrCred> creds) {
@@ -34,6 +33,8 @@ public class Sql2oRecieveDBRepository implements RecieveDBRepository {
                 query.addToBatch();
             });
             query.executeBatch();
+        } catch (Exception e) {
+            LOG.error("При вставке кредитов произошла ошибка: " + e.fillInStackTrace());
         }
     }
 
@@ -51,6 +52,8 @@ public class Sql2oRecieveDBRepository implements RecieveDBRepository {
                 query.addToBatch();
             });
             query.executeBatch();
+        } catch (Exception e) {
+            LOG.error("При вставке задолженностей произошла ошибка: " + e.fillInStackTrace());
         }
     }
 

@@ -1,9 +1,9 @@
-package ru.intel.сredits.calc.debtsByCred;
+package ru.intel.credits.calc.debts;
 
-import ru.intel.сredits.model.FactOper;
-import ru.intel.сredits.model.PrCred;
-import ru.intel.сredits.model.TakeInDebt;
-import ru.intel.сredits.model.VidOperDog;
+import ru.intel.credits.model.FactOper;
+import ru.intel.credits.model.PrCred;
+import ru.intel.credits.model.TakeInDebt;
+import ru.intel.credits.model.VidOperDog;
 
 import java.util.HashMap;
 
@@ -21,7 +21,7 @@ public class CalcSimpleDebt {
         for (FactOper fo : cred.getListFO()) {
             for (TakeInDebt debet : opers.get(fo.getOper()).getDebets()) {
                 if (debet.getDebt() == idDebt) {
-                    summa += debet.isDT() ? fo.getSumma() * -1 : fo.getSumma();
+                    summa += debet.isDt() ? fo.getSumma() * -1 : fo.getSumma();
                 }
             }
         }

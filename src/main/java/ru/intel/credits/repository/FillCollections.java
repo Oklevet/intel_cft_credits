@@ -1,6 +1,6 @@
-package ru.intel.сredits.repository;
+package ru.intel.credits.repository;
 
-import ru.intel.сredits.model.*;
+import ru.intel.credits.model.*;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,12 +26,12 @@ public class FillCollections implements FillCollectionOfModel {
     }
 
     public Collection<PrCred> fillFOInCreds(Collection<PrCred> creds, Collection<FactOper> fo) {
-        fo.forEach(x-> getCredByIdFo(creds, x.getCollectionId()).getListFO().add(x));
+        fo.forEach(x -> getCredByIdFo(creds, x.getCollectionId()).getListFO().add(x));
         return creds;
     }
 
     public Collection<PrCred> fillPOInCreds(Collection<PrCred> creds, Collection<PlanOper> fo) {
-        fo.forEach(x-> getCredByIdPo(creds, x.getCollectionId()).getListPO().add(x));
+        fo.forEach(x -> getCredByIdPo(creds, x.getCollectionId()).getListPO().add(x));
         return creds;
     }
 
@@ -48,8 +48,8 @@ public class FillCollections implements FillCollectionOfModel {
         HashMap<Integer, VidOperDog> opersMap = new HashMap<>();
 
         debets.stream()
-                .filter(x-> getVidOperByIdDebets(opers, x.getCollectionId()) != null)
-                .forEach(t-> getVidOperByIdDebets(opers, t.getCollectionId()).getDebets().add(t));
+                .filter(x -> getVidOperByIdDebets(opers, x.getCollectionId()) != null)
+                .forEach(t -> getVidOperByIdDebets(opers, t.getCollectionId()).getDebets().add(t));
 
         opers.forEach(x -> opersMap.put(x.getId(), x));
         return opersMap;

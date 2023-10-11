@@ -1,4 +1,4 @@
-package ru.intel.сredits.model;
+package ru.intel.credits.model;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -90,8 +90,12 @@ public class PrCred {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PrCred prCred)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PrCred prCred)) {
+            return false;
+        }
         return Objects.equals(numDog, prCred.numDog) && Objects.equals(val, prCred.val);
     }
 

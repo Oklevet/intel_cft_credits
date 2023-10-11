@@ -1,13 +1,11 @@
-package ru.intel.сredits.calc.debtsByCred;
+package ru.intel.credits.calc.debts;
 
-import ru.intel.сredits.model.PrCred;
-import ru.intel.сredits.model.VidOperDog;
+import ru.intel.credits.model.PrCred;
+import ru.intel.credits.model.VidOperDog;
 
 import java.util.HashMap;
 
 public class CalcComissDebt {
-
-    CalcSimpleDebt simpleDebt;
 
     /**
      * Расчет процентых задолженностей по журналу процентов.
@@ -15,5 +13,5 @@ public class CalcComissDebt {
      */
     public Double calcComissDebt(PrCred cred, HashMap<Integer, VidOperDog> opers, int idDebt) {
         return (double) 0;
-    };
+    }
 }

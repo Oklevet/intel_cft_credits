@@ -1,4 +1,4 @@
-package ru.intel.сredits.model;
+package ru.intel.credits.model;
 
 import java.util.*;
 
@@ -79,8 +79,12 @@ public class VidOperDog {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof VidOperDog that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof VidOperDog that)) {
+            return false;
+        }
         return id == that.id && Objects.equals(code, that.code);
     }
 
@@ -93,9 +97,9 @@ public class VidOperDog {
     public String toString() {
         StringJoiner sj = new StringJoiner(", ");
         debets.forEach(x -> sj.add(x.toString()));
-        return "VidOperDog{" +
-                "code='" + code + '\'' +
-                ", debets=" + sj +
-                '}';
+        return "VidOperDog{"
+                + "code='" + code + '\''
+                + ", debets=" + sj
+                + '}';
     }
 }

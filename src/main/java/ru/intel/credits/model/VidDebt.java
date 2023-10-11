@@ -1,4 +1,4 @@
-package ru.intel.сredits.model;
+package ru.intel.credits.model;
 
 import java.util.Map;
 import java.util.Objects;
@@ -47,8 +47,12 @@ public class VidDebt {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         VidDebt vidDebt = (VidDebt) o;
         return id == vidDebt.id && Objects.equals(code, vidDebt.code);
     }

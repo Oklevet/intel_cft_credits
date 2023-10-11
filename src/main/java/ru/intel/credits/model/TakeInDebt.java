@@ -1,4 +1,4 @@
-package ru.intel.сredits.model;
+package ru.intel.credits.model;
 
 import java.util.Map;
 import java.util.Objects;
@@ -12,12 +12,12 @@ public class TakeInDebt {
     );
 
     private int debt;
-    private boolean DT;
+    private boolean dt;
     private int collectionId;
 
-    public TakeInDebt(int debt, boolean DT, int collectionId) {
+    public TakeInDebt(int debt, boolean dt, int collectionId) {
         this.debt = debt;
-        this.DT = DT;
+        this.dt = dt;
         this.collectionId = collectionId;
     }
 
@@ -29,12 +29,12 @@ public class TakeInDebt {
         this.debt = debt;
     }
 
-    public boolean isDT() {
-        return DT;
+    public boolean isDt() {
+        return dt;
     }
 
-    public void setDT(boolean DT) {
-        this.DT = DT;
+    public void setDt(boolean dt) {
+        this.dt = dt;
     }
 
     public int getCollectionId() {

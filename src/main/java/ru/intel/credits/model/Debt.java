@@ -1,4 +1,4 @@
-package ru.intel.сredits.model;
+package ru.intel.credits.model;
 
 import java.util.Objects;
 
@@ -42,8 +42,12 @@ public class Debt {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Debt)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Debt)) {
+            return false;
+        }
         Debt debt = (Debt) o;
         return collectionId == debt.collectionId && id == debt.id;
     }

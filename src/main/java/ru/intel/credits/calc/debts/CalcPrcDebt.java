@@ -1,8 +1,7 @@
-package ru.intel.сredits.calc.debtsByCred;
+package ru.intel.credits.calc.debts;
 
-import ru.intel.сredits.calc.CalcAllDebts;
-import ru.intel.сredits.model.PrCred;
-import ru.intel.сredits.model.VidOperDog;
+import ru.intel.credits.model.PrCred;
+import ru.intel.credits.model.VidOperDog;
 
 import java.util.HashMap;
 
@@ -17,5 +16,5 @@ public class CalcPrcDebt {
     public Double calcPrcDebt(PrCred cred, HashMap<Integer, VidOperDog> opers, int idDebt) {
         simpleDebt = new CalcSimpleDebt();
         return (double) 0 + simpleDebt.calcSimpleDebt(cred, opers, idDebt);
-    };
+    }
 }

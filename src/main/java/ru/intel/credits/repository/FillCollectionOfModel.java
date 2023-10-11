@@ -1,10 +1,9 @@
-package ru.intel.сredits.repository;
+package ru.intel.credits.repository;
 
-import ru.intel.сredits.model.*;
+import ru.intel.credits.model.*;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Objects;
 
 public interface FillCollectionOfModel {
     PrCred getCredByIdFo(Collection<PrCred> creds, int collection);

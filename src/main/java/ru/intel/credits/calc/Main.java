@@ -1,17 +1,15 @@
-package ru.intel.сredits.calc;
+package ru.intel.credits.calc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.intel.сredits.configuration.DatasourceConfiguration;
-import ru.intel.сredits.model.Debt;
-import ru.intel.сredits.model.PrCred;
-import ru.intel.сredits.repository.Sql2oCFTRepository;
-import ru.intel.сredits.repository.Sql2oRecieveDBRepository;
+import ru.intel.credits.configuration.DatasourceConfiguration;
+import ru.intel.credits.model.Debt;
+import ru.intel.credits.model.PrCred;
+import ru.intel.credits.repository.Sql2oCFTRepository;
+import ru.intel.credits.repository.Sql2oRecieveDBRepository;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -42,6 +40,8 @@ public class Main {
 
         sql2oRecieveDBRepository.insertAllCreds(prCreds);
         sql2oRecieveDBRepository.insertAllDebts(debts, calcAllDebts.vidDebts);
+
+        LOG.error("Расчет задолженностей произведен");
     }
 
     public void connectToCFT() {

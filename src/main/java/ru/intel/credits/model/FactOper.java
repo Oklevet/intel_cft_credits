@@ -1,16 +1,16 @@
-package ru.intel.сredits.model;
+package ru.intel.credits.model;
 
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 
-public class PlanOper {
+public class FactOper {
 
     public static final Map<String, String> COLUMN_MAPPING = Map.of(
             "summa", "summa",
             "oper", "oper",
-            "VID_DEBT", "vidDebt",
-            "VID_DEBT_DT", "vidDebtDt",
+            "vid_debt", "vidDebt",
+            "vid_debt_dt", "vidDebtDt",
             "collection_id", "collectionId"
     );
 
@@ -21,7 +21,7 @@ public class PlanOper {
     private int vidDebtDt;
     private int collectionId;
 
-    public PlanOper(double summa, int oper, int vidDebt, int vidDebtDt, int collectionId) {
+    public FactOper(double summa, int oper, int vidDebt, int vidDebtDt, int collectionId) {
         this.summa = summa;
         this.oper = oper;
         this.vidDebt = vidDebt;
@@ -79,9 +79,13 @@ public class PlanOper {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PlanOper planOper)) return false;
-        return Double.compare(planOper.summa, summa) == 0 && oper == planOper.oper && Objects.equals(date, planOper.date);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FactOper factOper)) {
+            return false;
+        }
+        return Double.compare(factOper.summa, summa) == 0 && oper == factOper.oper && Objects.equals(date, factOper.date);
     }
 
     @Override

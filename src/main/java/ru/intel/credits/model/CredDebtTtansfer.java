@@ -1,4 +1,4 @@
-package ru.intel.сredits.model;
+package ru.intel.credits.model;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,8 +32,12 @@ public class CredDebtTtansfer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CredDebtTtansfer that = (CredDebtTtansfer) o;
         return Objects.equals(creds, that.creds) && Objects.equals(debts, that.debts);
     }

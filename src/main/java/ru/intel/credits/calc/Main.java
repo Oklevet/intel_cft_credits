@@ -23,7 +23,7 @@ public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public void calcAndTransferCreds(int batch) {
-
+        LOG.info("Запуск расчёта задолженностей");
         main.connectToCFT();
         main.connectToRecieveDB();
 
@@ -34,14 +34,14 @@ public class Main {
         var prCreds = new ArrayList<PrCred>();
         var debts = new ArrayList<Debt>();
         credDebt.forEach(x -> {
-            prCreds.addAll(x.getCreds());
+                      prCreds.addAll(x.getCreds());
             debts.addAll(x.getDebts());
         });
 
         sql2oRecieveDBRepository.insertAllCreds(prCreds);
         sql2oRecieveDBRepository.insertAllDebts(debts, calcAllDebts.vidDebts);
 
-        LOG.error("Расчет задолженностей произведен");
+        LOG.info("Расчет задолженностей произведен");
     }
 
     public void connectToCFT() {

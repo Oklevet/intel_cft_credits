@@ -1,7 +1,8 @@
-package ru.intel.credits.calc;
+package ru.intel.credits;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.intel.credits.calc.CalcAllDebts;
 import ru.intel.credits.configuration.DatasourceConfiguration;
 import ru.intel.credits.model.Debt;
 import ru.intel.credits.model.PrCred;
@@ -34,7 +35,7 @@ public class Main {
         var prCreds = new ArrayList<PrCred>();
         var debts = new ArrayList<Debt>();
         credDebt.forEach(x -> {
-                      prCreds.addAll(x.getCreds());
+            prCreds.addAll(x.getCreds());
             debts.addAll(x.getDebts());
         });
 

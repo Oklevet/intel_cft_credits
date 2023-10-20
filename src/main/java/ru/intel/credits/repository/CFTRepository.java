@@ -16,9 +16,9 @@ public interface CFTRepository {
 
     Collection<VidOperDog> getAllVidOperDogs();
 
-    Collection<FactOper> getAllFOByCreds();
+    Collection<FactOper> getAllFOByCreds(List<Integer> listId);
 
-    Collection<PlanOper> getAllPOByCreds();
+    Collection<PlanOper> getAllPOByCreds(List<Integer> listId);
 
     Collection<TakeInDebt> getAllTakeInDebt();
 }

@@ -33,7 +33,8 @@ public class Sql2oCFTRepository implements CFTRepository {
             var sql = "select  pr.NUM_DOG, pr.VAL, pr.LIST_PAY, pr.LIST_PLAN_PAY "
                     + "from   intel_cft_credits.PR_CRED pr "
                     + "where  pr.id in (:list);";
-            var query = connection.createQuery(sql).addParameter("list", listId);
+            var query = connection.createQuery(sql)
+                    .addParameter("list", listId);
             return query.setColumnMappings(PrCred.COLUMN_MAPPING).executeAndFetch(PrCred.class);
         }
     }
@@ -64,7 +65,7 @@ public class Sql2oCFTRepository implements CFTRepository {
     }
 
     @Override
-    public Collection<FactOper> getAllFOByCreds() {
+    public Collection<FactOper> getAllFOByCreds(List<Integer> listId) {
         try (var connection = sql2o.open()) {
             var query = connection.createQuery(""
                     + "select fo.SUMMA, fo.OPER, v.VID_DEBT, v.VID_DEBT_DT, fo.collection_id "
@@ -73,15 +74,16 @@ public class Sql2oCFTRepository implements CFTRepository {
                     +        "select pr.LIST_PAY "
                     +        "from   intel_cft_credits.PR_CRED pr "
                     +        "where  pr.STATE = 'Открыт') "
+                    + "              and pr.id in (:list) "
                     + "and fo.DATE < current_date + 1 "
                     + "and fo.OPER = v.id"
-            );
+            ).addParameter("list", listId);
             return query.setColumnMappings(FactOper.COLUMN_MAPPING).executeAndFetch(FactOper.class);
         }
     }
 
     @Override
-    public Collection<PlanOper> getAllPOByCreds() {
+    public Collection<PlanOper> getAllPOByCreds(List<Integer> listId) {
         try (var connection = sql2o.open()) {
             var query = connection.createQuery(""
                     + "select po.SUMMA, po.OPER, v.VID_DEBT, v.VID_DEBT_DT, po.collection_id "
@@ -90,9 +92,10 @@ public class Sql2oCFTRepository implements CFTRepository {
                     +        "select pr.LIST_PLAN_PAY "
                     +        "from   intel_cft_credits.PR_CRED pr "
                     +        "where  pr.STATE = 'Открыт') "
+                    + "              and pr.id in (:list) "
                     + "and po.DATE < current_date + 1 "
                     + "and po.OPER = v.id"
-            );
+            ).addParameter("list", listId);
             return query.setColumnMappings(PlanOper.COLUMN_MAPPING).executeAndFetch(PlanOper.class);
         }
     }

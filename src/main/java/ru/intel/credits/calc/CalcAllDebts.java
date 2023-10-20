@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public class CalcAllDebts {
 
-    HashMap<Integer, VidDebt> vidDebts = new HashMap<>();
+    public HashMap<Integer, VidDebt> vidDebts = new HashMap<>();
 
     HashMap<Integer, VidOperDog> opers;
 
@@ -66,8 +66,8 @@ public class CalcAllDebts {
             x.setCollectionDebts(sequence.getAndIncrement());
         });
 
-        creds = fillCollections.fillFOInCreds(creds, sql2oCFT.getAllFOByCreds());
-        creds = fillCollections.fillPOInCreds(creds, sql2oCFT.getAllPOByCreds());
+        creds = fillCollections.fillFOInCreds(creds, sql2oCFT.getAllFOByCreds(listId));
+        creds = fillCollections.fillPOInCreds(creds, sql2oCFT.getAllPOByCreds(listId));
 
         return creds;
     }
@@ -92,8 +92,8 @@ public class CalcAllDebts {
         debtsOfCred.remove(0);
     }
 
-    public CredDebtTtansfer credPoolCalc(Collection<PrCred> creds) {
-        var credDebt = new CredDebtTtansfer(new ArrayList<>(), new ArrayList<>());
+    public CredDebtTransfer credPoolCalc(Collection<PrCred> creds) {
+        var credDebt = new CredDebtTransfer(new ArrayList<>(), new ArrayList<>());
         for (PrCred cred : creds) {
             credDebt.getCreds().add(cred);
             getCredDebts(cred);
@@ -126,9 +126,9 @@ public class CalcAllDebts {
                 n -> source.subList(n * length, n == fullChunks ? size : (n + 1) * length));
     }
 
-    public List<CredDebtTtansfer> calcAllCredsByPools(CalcAllDebts calcAllDebts, int batch) {
+    public List<CredDebtTransfer> calcAllCredsByPools(CalcAllDebts calcAllDebts, int batch) {
         var listCredId = sql2oCFT.getIDAllCreds();
-        var credDebt = new ArrayList<CredDebtTtansfer>();
+        var credDebt = new ArrayList<CredDebtTransfer>();
         try {
             batchesOfList(listCredId, batch).forEach(x ->
                     credDebt.add(calcAllDebts.credPoolCalc(calcAllDebts.loadNewCredsPool(x))));

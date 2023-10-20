@@ -3,13 +3,13 @@ package ru.intel.credits.model;
 import java.util.List;
 import java.util.Objects;
 
-public class CredDebtTtansfer {
+public class CredDebtTransfer {
 
     private List<PrCred> creds;
 
     private List<Debt> debts;
 
-    public CredDebtTtansfer(List<PrCred> creds, List<Debt> debts) {
+    public CredDebtTransfer(List<PrCred> creds, List<Debt> debts) {
         this.creds = creds;
         this.debts = debts;
     }
@@ -38,7 +38,7 @@ public class CredDebtTtansfer {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CredDebtTtansfer that = (CredDebtTtansfer) o;
+        CredDebtTransfer that = (CredDebtTransfer) o;
         return Objects.equals(creds, that.creds) && Objects.equals(debts, that.debts);
     }
 

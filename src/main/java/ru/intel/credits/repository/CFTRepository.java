@@ -2,23 +2,21 @@ package ru.intel.credits.repository;
 
 import ru.intel.credits.model.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public interface CFTRepository {
 
-    List<Integer> getIDAllCreds();
+    Set<Integer> getIDAllCreds();
 
-    Collection<PrCred> getAllCreds(List<Integer> listId);
+    PrCred getCred(int id);
 
-    HashMap<Integer, VidDebt> getAllVidDebts();
+    Map<Integer, VidDebt> getAllVidDebts();
 
     Collection<VidOperDog> getAllVidOperDogs();
 
-    Collection<FactOper> getAllFOByCreds(List<Integer> listId);
+    Collection<FactOper> getAllFOByCreds(int id);
 
-    Collection<PlanOper> getAllPOByCreds(List<Integer> listId);
+    Collection<PlanOper> getAllPOByCreds(int id);
 
     Collection<TakeInDebt> getAllTakeInDebt();
 }

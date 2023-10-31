@@ -1,59 +1,98 @@
 package ru.intel.credits.repository;
 
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sql2o.Query;
-import org.sql2o.Sql2o;
+import ru.intel.credits.configuration.Connect2DB;
+import ru.intel.credits.configuration.DataSource;
 import ru.intel.credits.model.*;
 
 import java.lang.invoke.MethodHandles;
+import java.sql.*;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class Sql2oRecieveDBRepository implements RecieveDBRepository {
+@RequiredArgsConstructor
+public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository {
 
-    private final Sql2o sql2o;
+    @NonNull
+    private final DataSource dataSource;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public Sql2oRecieveDBRepository(Sql2o sql2o) {
-        this.sql2o = sql2o;
+    @Override
+    public Connection initConnection(DataSource dataSource) {
+        Connection connection = null;
+        try {
+            Class.forName(dataSource.getDriver());
+            connection = DriverManager.getConnection(dataSource.getUrl(), dataSource.getUsername(), dataSource.getPassword());
+        } catch (Exception e) {
+            LOG.error("При подключении к БД ЦФТ произошла ошибка: " + e.fillInStackTrace());
+        }
+        return connection;
+    }
+
+    @Override
+    public void closeCon(Connection connection) {
+        try {
+            connection.close();
+        } catch (Exception e) {
+            LOG.error("При закрытии подключения к БД ЦФТ произошла ошибка: " + e.fillInStackTrace());
+        }
     }
 
     @Override
     public void insertAllCreds(Collection<PrCred> creds) {
+        Connection connection = initConnection(dataSource);
+        int countBatch = 0;
+        try {
+            PreparedStatement statement = connection.prepareStatement("""
+                      INSERT INTO intel_receiver.PR_CRED (NUM_DOG, DEBTS) VALUES (?, ?)""");
 
-        try (var connection = sql2o.open()) {
-            var sql = """
-                      INSERT INTO intel_receiver.PR_CRED (NUM_DOG, DEBTS) VALUES (:NUM_DOG, :DEBTS)""";
-            var query = connection.createQuery(sql, true);
-            creds.forEach(x -> {
-                query.addParameter("NUM_DOG", x.getNumDog());
-                query.addParameter("DEBTS", x.getCollectionDebts());
-                query.addToBatch();
-            });
-            query.executeBatch();
+            for (PrCred cred : creds) {
+                statement.setString(1, cred.getNumDog());
+                statement.setInt(2, cred.getCollectionDebts());
+
+                statement.addBatch();
+                countBatch++;
+
+                if (countBatch % 1000 == 0 || countBatch == creds.size()) {
+                    statement.executeBatch();
+                }
+            }
         } catch (Exception e) {
             LOG.error("При вставке кредитов произошла ошибка: " + e.fillInStackTrace());
+        } finally {
+            closeCon(connection);
         }
     }
 
     @Override
     public void insertAllDebts(Collection<Debt> debts, HashMap<Integer, VidDebt> dirDebts) {
+        Connection connection = initConnection(dataSource);
+        int countBatch = 0;
+        try {
+            PreparedStatement statement = connection.prepareStatement("""
+                      INSERT INTO intel_receiver.DEBTS (CODE, SUMMA, collection_id) VALUES (?, ?, ?)""");
 
-        try (var connection = sql2o.open()) {
-            var sql = """
-                    INSERT INTO intel_receiver.DEBTS (CODE, SUMMA, collection_id) VALUES (:CODE, :SUMMA, :collection_id)""";
-            var query = connection.createQuery(sql, true);
-            debts.forEach(x -> {
-                query.addParameter("CODE", dirDebts.get(x.getId()).getCode());
-                query.addParameter("SUMMA", x.getSumma());
-                query.addParameter("collection_id", x.getCollectionId());
-                query.addToBatch();
-            });
-            query.executeBatch();
+            for (Debt debt : debts) {
+                statement.setString(1, dirDebts.get(debt.getId()).getCode());
+                statement.setDouble(2, debt.getSumma());
+                statement.setInt(3, debt.getCollectionId());
+
+                statement.addBatch();
+                countBatch++;
+
+                if (countBatch % 1000 == 0 || countBatch == debts.size()) {
+                    statement.executeBatch();
+                }
+            }
         } catch (Exception e) {
             LOG.error("При вставке задолженностей произошла ошибка: " + e.fillInStackTrace());
+        } finally {
+            closeCon(connection);
         }
     }
 
@@ -63,24 +102,17 @@ public class Sql2oRecieveDBRepository implements RecieveDBRepository {
      * 2. Пожертвовать уникальность collection_id, что не сильно критично, для реализации буферного запроса для большой пачки кредитов
      */
     @Override
-    public Integer getSequence(int count) {
+    public Integer getSequence() {
+        Connection connection = initConnection(dataSource);
         int result = 0;
-        var sql = "select nextval('intel_receiver.serial');";
-        Query query = null;
-
-        try (var connection = sql2o.open()) {
-            query = connection.createQuery(sql, true);
-            result = query.executeScalar(Integer.class);
-        }
-
-        if (count > 1) {
-            try (var connection = sql2o.open()) {
-                for (int i = 0; i < count - 1; i++) {
-                    query = connection.createQuery(sql, true)
-                            .addToBatch();
-                }
-                query.executeBatch();
-            }
+        try {
+            ResultSet rs = connection.createStatement()
+                    .executeQuery("select nextval('intel_receiver.serial');");
+            result = rs.getInt(1);
+        } catch (SQLException e) {
+            LOG.error("При получении сиквенсера БД получателя произошла ошибка: " + e.fillInStackTrace());
+        } finally {
+            closeCon(connection);
         }
         return result;
     }

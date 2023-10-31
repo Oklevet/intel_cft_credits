@@ -7,7 +7,7 @@ import ru.intel.credits.model.VidOperDog;
 
 import java.util.HashMap;
 
-public class CalcSimpleDebt {
+public class CalcSimpleDebt implements CalcDebt {
 
     /**
      * Расчет простых задолженностей. Необходим и для расчета процентных задолженностей.
@@ -16,7 +16,9 @@ public class CalcSimpleDebt {
      * @param idDebt - ID задолженности
      * @return - сумма задолженности
      */
-    public Double calcSimpleDebt(PrCred cred, HashMap<Integer, VidOperDog> opers, int idDebt) {
+
+    @Override
+    public Double calcDebt(PrCred cred, HashMap<Integer, VidOperDog> opers, int idDebt) {
         double summa = 0;
         for (FactOper fo : cred.getListFO()) {
             for (TakeInDebt debet : opers.get(fo.getOper()).getDebets()) {

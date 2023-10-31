@@ -11,5 +11,5 @@ public interface RecieveDBRepository {
 
     void insertAllDebts(Collection<Debt> debts, HashMap<Integer, VidDebt> dirDebts);
 
-    Integer getSequence(int count);
+    Integer getSequence();
 }

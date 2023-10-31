@@ -5,7 +5,7 @@ import ru.intel.credits.model.VidOperDog;
 
 import java.util.HashMap;
 
-public class CalcPrcDebt {
+public class CalcPrcDebt implements CalcDebt {
 
     CalcSimpleDebt simpleDebt;
 
@@ -13,8 +13,9 @@ public class CalcPrcDebt {
      * Расчет процентых задолженностей по журналу процентов.
      * Список параметров раширить, функционал написать.
      */
-    public Double calcPrcDebt(PrCred cred, HashMap<Integer, VidOperDog> opers, int idDebt) {
+    @Override
+    public Double calcDebt(PrCred cred, HashMap<Integer, VidOperDog> opers, int idDebt) {
         simpleDebt = new CalcSimpleDebt();
-        return (double) 0 + simpleDebt.calcSimpleDebt(cred, opers, idDebt);
+        return (double) 0 + simpleDebt.calcDebt(cred, opers, idDebt);
     }
 }

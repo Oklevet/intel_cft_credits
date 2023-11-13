@@ -1,27 +1,17 @@
-grant usage on schema intel_cft_credits to public;
-grant create on schema intel_cft_credits to public;
-
-truncate table VID_DEBT;
-truncate table TAKE_IN_DEBT;
-truncate table VID_OPER_DOG;
-truncate table PLAN_OPER;q
-truncate table FACT_OPER;
-truncate table PR_CRED;
-
+drop SEQUENCE serial;
 drop table VID_DEBT;
 drop table TAKE_IN_DEBT;
 drop table VID_OPER_DOG;
-drop table PLAN_OPER;q
+drop table PLAN_OPER;
 drop table FACT_OPER;
 drop table PR_CRED;
-drop SEQUENCE serial;
 
 CREATE SEQUENCE serial START 101;
 
 create table VID_DEBT(
 	 ID int  PRIMARY KEY
 	,NAME varchar(500)
-	,CODE varchar(50)
+	,CODE varchar(50)   unique not null
 	,DEBT_TYPE varchar(50)
 );
 
@@ -78,6 +68,9 @@ create table PR_CRED(
 	,STATE			varchar(30)
 );
 
-select * from vid_debt;
-select * from vid_oper_dog;
-select * from TAKE_IN_DEBT;
+select * from PR_CRED -- 1148
+
+select fo.SUMMA, fo.OPER, v.VID_DEBT, v.VID_DEBT_DT, fo.collection_id
+                     from FACT_OPER fo, VID_OPER_DOG v
+                     where  fo.DATE < current_date + 1
+                     and fo.OPER = v.id

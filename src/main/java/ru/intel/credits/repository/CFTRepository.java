@@ -3,10 +3,13 @@ package ru.intel.credits.repository;
 import ru.intel.credits.model.*;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public interface CFTRepository {
 
-    Set<Integer> getIDAllCreds();
+    Set<Integer> getIDAllCredInSet();
+
+    CopyOnWriteArrayList<Integer> getIDAllCreds();
 
     PrCred getCred(int id);
 

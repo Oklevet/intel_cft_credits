@@ -1,6 +1,5 @@
 package ru.intel.credits.repository;
 
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -49,7 +48,7 @@ public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository
         int countBatch = 0;
         try {
             PreparedStatement statement = connection.prepareStatement("""
-                      INSERT INTO intel_receiver.PR_CRED (NUM_DOG, DEBTS) VALUES (?, ?)""");
+                      INSERT INTO PR_CRED (NUM_DOG, DEBTS) VALUES (?, ?)""");
 
             for (PrCred cred : creds) {
                 statement.setString(1, cred.getNumDog());
@@ -75,7 +74,7 @@ public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository
         int countBatch = 0;
         try {
             PreparedStatement statement = connection.prepareStatement("""
-                      INSERT INTO intel_receiver.DEBTS (CODE, SUMMA, collection_id) VALUES (?, ?, ?)""");
+                      INSERT INTO DEBTS (CODE, SUMMA, collection_id) VALUES (?, ?, ?)""");
 
             for (Debt debt : debts) {
                 statement.setString(1, dirDebts.get(debt.getId()).getCode());
@@ -107,7 +106,9 @@ public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository
         int result = 0;
         try {
             ResultSet rs = connection.createStatement()
-                    .executeQuery("select nextval('intel_receiver.serial');");
+                    .executeQuery("select nextval('serial');");
+            rs.next();
+
             result = rs.getInt(1);
         } catch (SQLException e) {
             LOG.error("При получении сиквенсера БД получателя произошла ошибка: " + e.fillInStackTrace());

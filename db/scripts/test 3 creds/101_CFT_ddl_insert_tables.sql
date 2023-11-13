@@ -1,3 +1,8 @@
+truncate table VID_DEBT;
+truncate table TAKE_IN_DEBT;
+truncate table VID_OPER_DOG;
+truncate table PR_CRED;
+
 insert into VID_DEBT values  (nextval('serial'), 'МСФО. Корректировка резерва срочной задолженности', 'CR_IFRS_CORR_REZ', 'Простая');
 insert into VID_DEBT values  (nextval('serial'), 'МСФО. Денежный поток', 'CR_IFRS_FLOW', 'Простая');
 insert into VID_DEBT values  (nextval('serial'), 'Сумма полного досрочного погашения', 'FULL_EARLY_REPAYMENT', 'Простая');
@@ -16,6 +21,7 @@ insert into VID_DEBT values  (nextval('serial'),'Просроченная ссу
 insert into VID_DEBT values  (nextval('serial'),'Резерв', 'РЕЗЕРВ', 'Простая');
 insert into VID_DEBT values  (nextval('serial'),'Резерв. сформированный за счет себестоимости', 'РЕЗЕРВ_СЕБЕСТ', 'Простая');
 insert into VID_DEBT values  (nextval('serial'),'Учтенные проценты за кредит', 'УЧТЕН_ПРОЦЕНТЫ', 'Простая');
+
 
 insert into VID_OPER_DOG values (nextval('serial'),'Выдача кредита', 'ВЫДАЧА_КРЕДИТА', nextval('serial'), null, (select id from VID_DEBT where CODE = 'КРЕДИТ'));
 		insert into TAKE_IN_DEBT values (nextval('serial'),(select TAKE_DEBT from VID_OPER_DOG where CODE = 'ВЫДАЧА_КРЕДИТА'), (select id from VID_DEBT where CODE = 'КРЕДИТ'), false);
@@ -103,4 +109,4 @@ insert into PR_CRED
 	values (nextval('serial'),'Р7-450000-11', to_date('22.12.2018', 'dd.mm.yyyy'), to_date('22.11.2025', 'dd.mm.yyyy'), 4500000, 'RUB', 'Аннуитетный потреительский', nextval('serial'), nextval('serial'), 'Открыт');
 
 insert into PR_CRED
-	values (nextval('serial'),'Д4-15000-8', to_date('20.10.2020', 'dd.mm.yyyy'), to_date('20.08.2024', 'dd.mm.yyyy'), 150000, 'USD', 'Аннуитетный потреительский', nextval('serial'), nextval('serial'), 'Открыт');
+	values (nextval('serial'),'Д4-150000-8', to_date('20.10.2020', 'dd.mm.yyyy'), to_date('20.08.2024', 'dd.mm.yyyy'), 150000, 'USD', 'Аннуитетный потреительский', nextval('serial'), nextval('serial'), 'Открыт');

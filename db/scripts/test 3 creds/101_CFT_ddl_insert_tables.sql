@@ -103,10 +103,12 @@ insert into VID_OPER_DOG values (nextval('serial'),'Гашение процен�
 
 
 insert into PR_CRED
+	values (nextval('serial'),'Д4-150000-8', to_date('20.10.2020', 'dd.mm.yyyy'), to_date('20.08.2024', 'dd.mm.yyyy'), 150000, 'USD', 'Аннуитетный потреительский', nextval('serial'), nextval('serial'), 'Открыт');
+
+insert into PR_CRED
   values (nextval('serial'),'Р10-5000', to_date('13.09.2022', 'dd.mm.yyyy'), to_date('13.09.2032', 'dd.mm.yyyy'), 5000000, 'RUB', 'Аннуитетный потреительский', nextval('serial'), nextval('serial'), 'Открыт');
 
 insert into PR_CRED
 	values (nextval('serial'),'Р7-450000-11', to_date('22.12.2018', 'dd.mm.yyyy'), to_date('22.11.2025', 'dd.mm.yyyy'), 4500000, 'RUB', 'Аннуитетный потреительский', nextval('serial'), nextval('serial'), 'Открыт');
 
-insert into PR_CRED
-	values (nextval('serial'),'Д4-150000-8', to_date('20.10.2020', 'dd.mm.yyyy'), to_date('20.08.2024', 'dd.mm.yyyy'), 150000, 'USD', 'Аннуитетный потреительский', nextval('serial'), nextval('serial'), 'Открыт');
+commit;

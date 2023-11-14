@@ -149,7 +149,6 @@ public class SqlCFTRepository implements Connect2DB, CFTRepository {
     public List<FactOper> getAllFOByCreds(int id) {
         Connection connection = initConnection(dataSource);
         List<FactOper> opers = new ArrayList<>(List.of());
-        LOG.debug("getAllFO cred id =  = " + id);
         try {
             PreparedStatement statement = connection.prepareStatement(""
                     + "select fo.SUMMA, fo.OPER, v.VID_DEBT, v.VID_DEBT_DT, fo.collection_id "
@@ -163,23 +162,17 @@ public class SqlCFTRepository implements Connect2DB, CFTRepository {
                     + "and fo.OPER = v.id"
             );
             statement.setInt(1, id);
-            LOG.debug("getAllFO try execute");
             ResultSet rs = statement.executeQuery();
-            LOG.debug("getAllFO get ResultSet");
 
             while (rs.next()) {
-                LOG.debug("getAllFO in while");
                 opers.add(new FactOper(rs.getInt(1), rs.getInt(2), rs.getInt(3),
                         rs.getInt(4), rs.getInt(5)));
-                LOG.debug("getAllFO in while after add");
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            LOG.debug("getAllFO close con");
             closeCon(connection);
         }
-        LOG.debug("getAllFO oper = " + opers.size());
         return opers;
     }
 

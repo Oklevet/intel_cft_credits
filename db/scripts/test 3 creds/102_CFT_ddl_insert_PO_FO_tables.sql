@@ -267,3 +267,5 @@ insert into PLAN_OPER values (nextval('serial'), to_date('11.05.2025', 'dd.mm.yy
 insert into PLAN_OPER values (nextval('serial'), to_date('11.06.2025', 'dd.mm.yyyy'),  	33.53, 'USD', (select x.id from VID_OPER_DOG x where x.CODE = 'ПЕРЕВОД_ПРОЦ'), (select x.LIST_PLAN_PAY from PR_CRED x where x.NUM_DOG = 'Д4-150000-8'));
 insert into PLAN_OPER values (nextval('serial'), to_date('11.07.2025', 'dd.mm.yyyy'),  	22.40, 'USD', (select x.id from VID_OPER_DOG x where x.CODE = 'ПЕРЕВОД_ПРОЦ'), (select x.LIST_PLAN_PAY from PR_CRED x where x.NUM_DOG = 'Д4-150000-8'));
 insert into PLAN_OPER values (nextval('serial'), to_date('11.08.2025', 'dd.mm.yyyy'),  	11.22, 'USD', (select x.id from VID_OPER_DOG x where x.CODE = 'ПЕРЕВОД_ПРОЦ'), (select x.LIST_PLAN_PAY from PR_CRED x where x.NUM_DOG = 'Д4-150000-8'));
+
+commit;

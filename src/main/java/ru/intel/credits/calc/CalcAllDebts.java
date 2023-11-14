@@ -34,11 +34,8 @@ public class CalcAllDebts {
      * Получение пачки кредитов по которой будет выполняться расчет задолженностей
      */
     public static PrCred setCredArrs(PrCred cred, int id, SqlCFTRepository sql2oCFT) {
-        LOG.debug("start setCredArrs");
         cred.setListFO((ArrayList<FactOper>) sql2oCFT.getAllFOByCreds(id));
-        LOG.debug("inserted FO");
         cred.setListPO((ArrayList<PlanOper>) sql2oCFT.getAllPOByCreds(id));
-        LOG.debug("inserted PO");
 
         return cred;
     }
@@ -67,6 +64,7 @@ public class CalcAllDebts {
         CalcComissDebt calcComissDebt = new CalcComissDebt();
         List<Debt> debts = new ArrayList<>();
         HashSet<Integer> debtsOfCred = getCredDebts(cred, opers);
+        debtsOfCred.remove(0);
 
         for (Integer debt : debtsOfCred) {
             switch (vidDebts.get(debt).getTypeDebt()) {
@@ -174,11 +172,7 @@ public class CalcAllDebts {
             List<Debt> debts = new ArrayList<>();
             List<PrCred> creds = new ArrayList<>();
 
-            LOG.debug("get sub list");
-
             List<Integer> listIds = getSubList();
-
-            LOG.debug("listIds size = " + listIds.size());
 
             while (listIds.size() > 0) {
                 LOG.debug("start new cred pack ");
@@ -188,13 +182,10 @@ public class CalcAllDebts {
 
                     PrCred cred = runSqlCFT.getCred(id);
 
-                    LOG.debug("cred num = " + cred.getNumDog());
-
                     creds.add(cred);
                     cred.setCollectionDebts(runSqlRecieveDB.getSequence());
                     cred = setCredArrs(cred, id, sql2oCFT);
                     debts.addAll(credCalc(cred, opers, vidDebts));
-                    LOG.debug("finish calc cred num = " + cred.getNumDog());
                 }
                 LOG.debug("calc debts ");
                 listIds = getSubList();
@@ -203,11 +194,6 @@ public class CalcAllDebts {
 
             LOG.debug("debts size = " + debts.size());
             LOG.debug("creds size = " + creds.size());
-
-            System.out.println();
-            debts.forEach(System.out::println);
-            creds.forEach(System.out::println);
-            System.out.println();
 
             LOG.debug("insert debts ");
             if (debts.size() > 0) {
@@ -223,8 +209,8 @@ public class CalcAllDebts {
         }
 
         try {
-            LOG.debug("sleep for 10 sec ");
-            Thread.sleep(10000);
+            LOG.debug("sleep for 30 sec ");
+            Thread.sleep(30000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -232,7 +218,7 @@ public class CalcAllDebts {
         while (!checkSetOfTaskIsDone(setOfTasks)) {
             try {
                 LOG.debug("tasks is working ");
-                Thread.sleep(10000);
+                Thread.sleep(30000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

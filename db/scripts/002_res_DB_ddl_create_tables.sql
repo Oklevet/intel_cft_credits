@@ -15,3 +15,5 @@ create table DEBTS(
 	,SUMMA 			NUMERIC(16,9)
 	,collection_id	int
 );
+
+commit;

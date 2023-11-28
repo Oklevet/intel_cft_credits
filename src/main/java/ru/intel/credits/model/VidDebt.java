@@ -12,7 +12,7 @@ import lombok.Setter;
 public class VidDebt {
 
     @EqualsAndHashCode.Include
-    private int id;
+    private long id;
 
     @EqualsAndHashCode.Include
     private String code;

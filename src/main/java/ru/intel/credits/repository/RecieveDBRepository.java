@@ -9,7 +9,7 @@ public interface RecieveDBRepository {
 
     void insertAllCreds(Collection<PrCred> creds);
 
-    void insertAllDebts(Collection<Debt> debts, HashMap<Integer, VidDebt> dirDebts);
+    void insertAllDebts(Collection<Debt> debts, HashMap<Long, VidDebt> dirDebts);
 
     Integer getSequence();
 }

@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public interface FillCollectionOfModel {
 
-    VidOperDog getVidOperByIdDebets(Collection<VidOperDog> opers, int collection);
+    VidOperDog getVidOperByIdDebets(Collection<VidOperDog> opers, long collection);
 
-    HashMap<Integer, VidOperDog> fillOperDebets(Collection<VidOperDog> opers, Collection<TakeInDebt> debets);
+    HashMap<Long, VidOperDog> fillOperDebets(Collection<VidOperDog> opers, Collection<TakeInDebt> debets);
 }

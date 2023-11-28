@@ -1,13 +1,16 @@
-package ru.intel.credits.calc.debts;
+package ru.intel.credits.model;
 
-import ru.intel.credits.model.FactOper;
-import ru.intel.credits.model.PrCred;
-import ru.intel.credits.model.TakeInDebt;
-import ru.intel.credits.model.VidOperDog;
+import lombok.AllArgsConstructor;
+import ru.intel.credits.calc.CalcDebtsStrategy;
 
 import java.util.HashMap;
 
-public class CalcSimpleDebt implements CalcDebt {
+@AllArgsConstructor
+public class DebtSimple extends Debt implements CalcDebtsStrategy {
+
+    public DebtSimple(long collectionId, long id) {
+        super(collectionId, id);
+    }
 
     /**
      * Расчет простых задолженностей. Необходим и для расчета процентных задолженностей.
@@ -16,9 +19,8 @@ public class CalcSimpleDebt implements CalcDebt {
      * @param idDebt - ID задолженности
      * @return - сумма задолженности
      */
-
     @Override
-    public Double calcDebt(PrCred cred, HashMap<Integer, VidOperDog> opers, int idDebt) {
+    public double calcDebt(PrCred cred, HashMap<Long, VidOperDog> opers, long idDebt) {
         double summa = 0;
         for (FactOper fo : cred.getListFO()) {
             for (TakeInDebt debet : opers.get(fo.getOper()).getDebets()) {

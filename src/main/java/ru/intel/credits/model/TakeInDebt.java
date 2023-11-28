@@ -12,10 +12,10 @@ import lombok.Setter;
 public class TakeInDebt {
 
     @EqualsAndHashCode.Include
-    private int debt;
+    private long debt;
 
     private boolean dt;
 
     @EqualsAndHashCode.Include
-    private int collectionId;
+    private long collectionId;
 }

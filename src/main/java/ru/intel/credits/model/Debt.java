@@ -1,21 +1,24 @@
 package ru.intel.credits.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Debt {
 
     @EqualsAndHashCode.Include
-    private int collectionId;
+    private long collectionId;
 
     @EqualsAndHashCode.Include
-    private int id;
+    private long id;
 
     private double summa;
+
+    public Debt(long collectionId, long id) {
+        this.collectionId = collectionId;
+        this.id = id;
+    }
 }

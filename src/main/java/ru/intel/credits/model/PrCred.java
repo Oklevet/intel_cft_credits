@@ -17,13 +17,13 @@ public class PrCred {
     @EqualsAndHashCode.Include
     private String val;
 
-    private int collectionFO;
+    private long collectionFO;
 
-    private int collectionPO;
+    private long collectionPO;
 
     private ArrayList<FactOper> listFO;
 
     private ArrayList<PlanOper> listPO;
 
-    private int collectionDebts;
+    private long collectionDebts;
 }

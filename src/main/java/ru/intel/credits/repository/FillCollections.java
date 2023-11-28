@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class FillCollections implements FillCollectionOfModel {
 
-    public VidOperDog getVidOperByIdDebets(Collection<VidOperDog> opers, int collection) {
+    public VidOperDog getVidOperByIdDebets(Collection<VidOperDog> opers, long collection) {
         for (VidOperDog oper : opers) {
             if (oper.getCollectionDebts() == collection) {
                 return oper;
@@ -16,8 +16,8 @@ public class FillCollections implements FillCollectionOfModel {
         return null;
     }
 
-    public HashMap<Integer, VidOperDog> fillOperDebets(Collection<VidOperDog> opers, Collection<TakeInDebt> debets) {
-        HashMap<Integer, VidOperDog> opersMap = new HashMap<>();
+    public HashMap<Long, VidOperDog> fillOperDebets(Collection<VidOperDog> opers, Collection<TakeInDebt> debets) {
+        HashMap<Long, VidOperDog> opersMap = new HashMap<>();
 
         debets.stream()
                 .filter(x -> getVidOperByIdDebets(opers, x.getCollectionId()) != null)

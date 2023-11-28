@@ -12,6 +12,8 @@ public class Main {
 
     public static void main(String[] args) {
         LOG.info("Начало расчета задолженностей");
+        long startTime = System.nanoTime();
+        System.out.println("startTime: " + startTime);
 
         DataSource dataSourceCFT = new DataSource(
                 "org.postgresql.Driver",
@@ -25,8 +27,12 @@ public class Main {
                 "postgres",
                 "asd1");
 
-        CalcAllDebts.calcAllCreds(dataSourceCFT, dataSourceReceiver, 5);
+        CalcAllDebts.calcAllCreds(dataSourceCFT, dataSourceReceiver, 25);
 
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime) / 1000000 / 1000;  //divide by 1000000 to get milliseconds.
+        System.out.println(System.lineSeparator() + "endTime: " + endTime);
+        System.out.println("duration: " + duration);
         LOG.info("Окончание расчета задолженностей");
     }
 }

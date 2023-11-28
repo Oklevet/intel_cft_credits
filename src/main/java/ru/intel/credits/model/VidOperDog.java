@@ -14,16 +14,16 @@ import java.util.*;
 public class VidOperDog {
 
     @EqualsAndHashCode.Include
-    private int id;
+    private long id;
 
     @EqualsAndHashCode.Include
     private String code;
 
-    private int collectionDebts;
+    private long collectionDebts;
 
-    private int vidDebt;
+    private long vidDebt;
 
-    private int vidDebtDt;
+    private long vidDebtDt;
 
     private ArrayList<TakeInDebt> debets;
 }

@@ -52,7 +52,7 @@ public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository
 
             for (PrCred cred : creds) {
                 statement.setString(1, cred.getNumDog());
-                statement.setInt(2, cred.getCollectionDebts());
+                statement.setLong(2, cred.getCollectionDebts());
 
                 statement.addBatch();
                 countBatch++;
@@ -69,7 +69,7 @@ public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository
     }
 
     @Override
-    public void insertAllDebts(Collection<Debt> debts, HashMap<Integer, VidDebt> dirDebts) {
+    public void insertAllDebts(Collection<Debt> debts, HashMap<Long, VidDebt> dirDebts) {
         Connection connection = initConnection(dataSource);
         int countBatch = 0;
         try {
@@ -79,7 +79,7 @@ public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository
             for (Debt debt : debts) {
                 statement.setString(1, dirDebts.get(debt.getId()).getCode());
                 statement.setDouble(2, debt.getSumma());
-                statement.setInt(3, debt.getCollectionId());
+                statement.setLong(3, debt.getCollectionId());
 
                 statement.addBatch();
                 countBatch++;

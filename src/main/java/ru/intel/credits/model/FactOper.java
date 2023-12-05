@@ -15,7 +15,7 @@ public class FactOper {
 
     @EqualsAndHashCode.Include
     private LocalDate date;
-    private double summa;
+    private long summa;
     @EqualsAndHashCode.Include
     private long oper;
     private long vidDebt;
@@ -23,7 +23,7 @@ public class FactOper {
     @EqualsAndHashCode.Include
     private long collectionId;
 
-    public FactOper(double summa, long oper, long vidDebt, long vidDebtDt, long collectionId) {
+    public FactOper(long summa, long oper, long vidDebt, long vidDebtDt, long collectionId) {
         this.summa = summa;
         this.oper = oper;
         this.vidDebt = vidDebt;

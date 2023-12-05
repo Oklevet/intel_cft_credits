@@ -13,7 +13,7 @@ public class PlanOper {
 
     @EqualsAndHashCode.Include
     private LocalDate date;
-    private double summa;
+    private long summa;
 
     @EqualsAndHashCode.Include
     private long oper;
@@ -23,7 +23,7 @@ public class PlanOper {
     @EqualsAndHashCode.Include
     private long collectionId;
 
-    public PlanOper(double summa, long oper, long vidDebt, long vidDebtDt, long collectionId) {
+    public PlanOper(long summa, long oper, long vidDebt, long vidDebtDt, long collectionId) {
         this.summa = summa;
         this.oper = oper;
         this.vidDebt = vidDebt;

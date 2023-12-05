@@ -83,8 +83,6 @@ public class CFTInsert10kReadSplit implements Connect2DB {
             break;
         }
 
-        mapAttrs.navigableKeySet().forEach(x -> System.out.println(x + ":  " + mapAttrs.get(x)));
-
         StringJoiner sql = new StringJoiner(" ");
         sql.add("INSERT INTO")
                 .add(splitFilepath[0])

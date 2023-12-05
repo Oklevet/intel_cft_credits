@@ -20,8 +20,8 @@ public class DebtSimple extends Debt implements CalcDebtsStrategy {
      * @return - сумма задолженности
      */
     @Override
-    public double calcDebt(PrCred cred, HashMap<Long, VidOperDog> opers, long idDebt) {
-        double summa = 0;
+    public long calcDebt(PrCred cred, HashMap<Long, VidOperDog> opers, long idDebt) {
+        long summa = 0;
         for (FactOper fo : cred.getListFO()) {
             for (TakeInDebt debet : opers.get(fo.getOper()).getDebets()) {
                 if (debet.getDebt() == idDebt) {

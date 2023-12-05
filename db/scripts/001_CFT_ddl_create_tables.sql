@@ -25,6 +25,8 @@ commit;
 select * from "Z#PLAN_OPER";
 select count(1) from "Z#PR_CRED";
 select * from "Z#PR_CRED";
+select * from "Z#PR_CRED" pr
+where pr.c_num_dog like '11-2014/Л';
 
 select * from "Z#VID_DEBT";
 
@@ -107,4 +109,35 @@ create table "Z#PR_CRED"(
 	,C_COM_STATUS		varchar(30)
 );
 
+create table "Z#PR_CRED_TEST"(
+	 ID 				bigint  PRIMARY KEY
+	,C_NUM_DOG			varchar(30)
+	,C_DATE_BEG 		date
+	,C_DATE_END 		date
+	,C_SUMMA 			NUMERIC(25,4)
+	,C_FT_CREDIT		varchar(3)
+	,C_KIND_CREDIT		varchar(250)
+	,C_LIST_PAY 		bigint
+	,C_LIST_PLAN_PAY 	bigint
+	,C_COM_STATUS		varchar(30)
+);
+
 commit;
+
+select p.id, po.id, po.c_oper, po.c_summa, vp.c_code, vp.id
+from "Z#PR_CRED" p, "Z#PLAN_OPER" po, "Z#VID_OPER_DOG" vp
+    , "Z#FACT_OPER" fo, "Z#VID_OPER_DOG" vf
+where p.id = 3177010213
+    and p.c_list_plan_pay = po.collection_id
+        and po.c_oper = vp.id
+
+
+select p.id, fo.id, fo.c_oper, fo.c_summa
+from "Z#PR_CRED" p, "Z#FACT_OPER" fo
+where p.c_list_pay = fo.collection_id
+    and p.id = 3177010213   -- in (3177010213, 3176883024)
+
+
+group by p.id
+having count(po.collection_id) > 3
+order by count(po.collection_id)

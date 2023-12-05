@@ -27,7 +27,11 @@ public class Main {
                 "postgres",
                 "asd1");
 
-        CalcAllDebts.calcAllCreds(dataSourceCFT, dataSourceReceiver, 25);
+        try {
+            CalcAllDebts.calcAllCreds(dataSourceCFT, dataSourceReceiver, 25);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1000000 / 1000;  //divide by 1000000 to get milliseconds.

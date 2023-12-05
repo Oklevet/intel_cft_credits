@@ -6,24 +6,24 @@ import ru.intel.credits.configuration.DataSource;
 import ru.intel.credits.model.*;
 import ru.intel.credits.repository.FillCollections;
 import ru.intel.credits.repository.SqlCFTRepository;
-import ru.intel.credits.repository.Sql2oRecieveDBRepository;
+import ru.intel.credits.repository.SqlRecieveDBRepository;
 
 import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Predicate;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CalcAllDebts {
 
     private SqlCFTRepository sql2oCFT;
 
-    private Sql2oRecieveDBRepository sql2oRecieveDB;
+    private SqlRecieveDBRepository sql2oRecieveDB;
 
     private static List credsId = new ArrayList();
 
     static Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public CalcAllDebts(SqlCFTRepository sql2oCFT, Sql2oRecieveDBRepository sql2oRecieveDB) {
+    public CalcAllDebts(SqlCFTRepository sql2oCFT, SqlRecieveDBRepository sql2oRecieveDB) {
         this.sql2oCFT = sql2oCFT;
         this.sql2oRecieveDB = sql2oRecieveDB;
     }
@@ -32,8 +32,8 @@ public class CalcAllDebts {
      * Получение пачки кредитов по которой будет выполняться расчет задолженностей
      */
     public static PrCred setCredArrs(PrCred cred, Long id, SqlCFTRepository sql2oCFT) {
-        cred.setListFO((ArrayList<FactOper>) sql2oCFT.getAllFOByCreds(id));
-        cred.setListPO((ArrayList<PlanOper>) sql2oCFT.getAllPOByCreds(id));
+        cred.setListFO((ArrayList<FactOper>) sql2oCFT.getAllFOByCred(id));
+        cred.setListPO((ArrayList<PlanOper>) sql2oCFT.getAllPOByCred(id));
 
         return cred;
     }
@@ -67,17 +67,17 @@ public class CalcAllDebts {
             switch (vidDebts.get(debt).getTypeDebt()) {
                 case "Простая" -> {
                     DebtSimple modelDebt = new DebtSimple(cred.getCollectionDebts(), debt);
-                    modelDebt.setSumma(modelDebt.calcDebt(cred, opers, debt));
+                    modelDebt.setSumma((double) modelDebt.calcDebt(cred, opers, debt) / 100);
                     debts.add(modelDebt);
                 }
                 case "Процентная" -> {
                     DebtPrc modelDebt = new DebtPrc(cred.getCollectionDebts(), debt);
-                    modelDebt.setSumma(modelDebt.calcDebt(cred, opers, debt));
+                    modelDebt.setSumma((double) modelDebt.calcDebt(cred, opers, debt) / 100);
                     debts.add(modelDebt);
                 }
                 case "Комиссионная" -> {
                     DebtComiss modelDebt = new DebtComiss(cred.getCollectionDebts(), debt);
-                    modelDebt.setSumma(modelDebt.calcDebt(cred, opers, debt));
+                    modelDebt.setSumma((double) modelDebt.calcDebt(cred, opers, debt) / 100);
                     debts.add(modelDebt);
                 }
                 default -> debts.isEmpty();
@@ -87,76 +87,80 @@ public class CalcAllDebts {
     }
 
     public synchronized static List getSubList() {
-        log.debug("getSubList start " + credsId.size());
-        int subSize = 100;
-        List result;
         try {
-            if (credsId.size() >= subSize) {
-                result = credsId.subList(0, subSize);
-                credsId = List.copyOf(credsId.subList(subSize, credsId.size()));
-            } else {
-                if (credsId.size() > 0) {
-                    result = credsId.subList(0, credsId.size());
-                    credsId = List.of();
+            log.debug("getSubList start " + credsId.size());
+            int subSize = 100;
+            List result;
+            try {
+                if (credsId.size() >= subSize) {
+                    result = credsId.subList(0, subSize);
+                    credsId = List.copyOf(credsId.subList(subSize, credsId.size()));
                 } else {
-                    log.debug("getSubList finish" + credsId.size());
-                    return List.of();
+                    if (credsId.size() > 0) {
+                        result = credsId.subList(0, credsId.size());
+                        credsId = List.of();
+                    } else {
+                        log.debug("getSubList finish" + credsId.size());
+                        return List.of();
+                    }
                 }
+                log.debug("getSubList finish" + credsId.size());
+                return result;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            log.debug("getSubList finish" + credsId.size());
-            return result;
-        }catch (Exception e) {
+            log.debug("getSubList finish " + credsId.size());
+            return List.of();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        log.debug("getSubList finish" + credsId.size());
-        return List.of();
-    }
-
-    public static boolean checkSetOfTaskIsDone(Set<Future> setOfTasks) {
-        for (Future future : setOfTasks) {
-            if (!future.isDone()) {
-                return false;
-            }
-        }
-        return true;
+        log.debug("getSubList in last catch"); return List.of();
     }
 
     public static int plugTask(DataSource dataSourceCFT, DataSource dataSourceReceiver, HashMap<Long, VidOperDog> opers,
                                HashMap<Long, VidDebt> vidDebts) {
         log.debug("start new run " + Thread.currentThread().getName());
 
+        FillCollections fillCollecThd = new FillCollections();
         SqlCFTRepository runSqlCFT = new SqlCFTRepository(dataSourceCFT);
-        Sql2oRecieveDBRepository runSqlRecieveDB = new Sql2oRecieveDBRepository(dataSourceReceiver);
+        SqlRecieveDBRepository runSqlRecieveDB = new SqlRecieveDBRepository(dataSourceReceiver);
         List<Debt> debts = new ArrayList<>();
         List<PrCred> creds = new ArrayList<>();
+        HashMap<Long, List<FactOper>> foOpers;
+        HashMap<Long, List<PlanOper>> poOpers;
+        SqlRecieveDBRepository sqlRecieveDB = new SqlRecieveDBRepository(dataSourceReceiver);
+        AtomicLong seqId = sqlRecieveDB.getSequence();
 
         List<Long> listIds = getSubList();
-
-
+        log.debug("get first listIds = " + listIds.size());
         while (listIds.size() > 0) {
+            log.debug("start while");
+            creds = runSqlCFT.getCreds(listIds);
+            log.debug("get creds");
+            foOpers = runSqlCFT.getAllFOByCreds(listIds);
+            poOpers = runSqlCFT.getAllPOByCreds(listIds);
+            log.debug("get FO & PO");
+            creds = fillCollecThd.fillFoPoDebtInCreds(creds, foOpers, poOpers, seqId.getAndAdd(listIds.size()));
+            foOpers.clear();
+            poOpers.clear();
+            log.debug("fill to creds FO & PO");
+            creds.forEach(x -> debts.addAll(credCalc(x, opers, vidDebts)));
 
-            listIds.stream().forEach(x -> {
-
-                PrCred cred = runSqlCFT.getCred(x);
-
-                creds.add(cred);
-                cred.setCollectionDebts(runSqlRecieveDB.getSequence());
-                cred = setCredArrs(cred, x, runSqlCFT);
-                debts.addAll(credCalc(cred, opers, vidDebts));
-            });
-
+            log.debug("cred calced, get new listIds = " + listIds.size());
             listIds = getSubList();
 
             log.debug("insert debts size = " + debts.size());
             if (debts.size() > 0) {
                 runSqlRecieveDB.insertAllDebts(debts, vidDebts);
                 runSqlRecieveDB.insertAllCreds(creds);
+                debts.clear();
+                creds.clear();
             }
         }
         return 1;
     }
 
-    public static void calcAllCreds(DataSource dataSourceCFT, DataSource dataSourceReceiver, int countTasks) {
+    public static void calcAllCreds(DataSource dataSourceCFT, DataSource dataSourceReceiver, int countTasks) throws ExecutionException, InterruptedException {
 
         /**
          * Обновление необходимых для расчетов справочников VID_DEBT и VID_OPER_DOG
@@ -168,7 +172,9 @@ public class CalcAllDebts {
         HashMap<Long, VidDebt> vidDebts;
         HashMap<Long, VidOperDog> opers;
         SqlCFTRepository sql2oCFT = new SqlCFTRepository(dataSourceCFT);
+        SqlRecieveDBRepository sqlRecieveDB = new SqlRecieveDBRepository(dataSourceReceiver);
         Set<Future> setOfTasks = new HashSet<>();
+        AtomicLong seqId = sqlRecieveDB.getSequence();
 
         log.debug("start calcAllCreds");
 
@@ -214,27 +220,25 @@ public class CalcAllDebts {
          * После того как все ID в множестве credsId будут рассчитаны, задание вставит результат в БД получателя
          * и завершит работу
          */
-
-        //лямблы и строим api supply consumer predicat
-        //бегать в БД для саб листа единожды. Достать старый код по сортировки массивов кредита
         Callable taskCalcAndInsertDebts = () -> {
             log.debug("start new run " + Thread.currentThread().getName());
 
+            FillCollections fillCollecThd = new FillCollections();
             SqlCFTRepository runSqlCFT = new SqlCFTRepository(dataSourceCFT);
-            Sql2oRecieveDBRepository runSqlRecieveDB = new Sql2oRecieveDBRepository(dataSourceReceiver);
+            SqlRecieveDBRepository runSqlRecieveDB = new SqlRecieveDBRepository(dataSourceReceiver);
             List<Debt> debts = new ArrayList<>();
             List<PrCred> creds = new ArrayList<>();
+            HashMap<Long, List<FactOper>> foOpers;
+            HashMap<Long, List<PlanOper>> poOpers;
 
             List<Long> listIds = getSubList();
-
+            log.debug("get first listIds = " + listIds.size());
             while (listIds.size() > 0) {
-                listIds.stream().forEach(x -> {
-                    PrCred cred = runSqlCFT.getCred(x);
-                    creds.add(cred);
-                    cred.setCollectionDebts(runSqlRecieveDB.getSequence());
-                    cred = setCredArrs(cred, x, runSqlCFT);
-                    debts.addAll(credCalc(cred, opers, vidDebts));
-                });
+                creds = runSqlCFT.getCreds(listIds);
+                foOpers = runSqlCFT.getAllFOByCreds(listIds);
+                poOpers = runSqlCFT.getAllPOByCreds(listIds);
+                creds = fillCollecThd.fillFoPoDebtInCreds(creds, foOpers, poOpers, seqId.getAndAdd(listIds.size()));
+                creds.forEach(x -> debts.addAll(credCalc(x, opers, vidDebts)));
 
                 listIds = getSubList();
 
@@ -243,16 +247,18 @@ public class CalcAllDebts {
                     runSqlRecieveDB.insertAllDebts(debts, vidDebts);
                     runSqlRecieveDB.insertAllCreds(creds);
                 }
+
+                Thread.sleep(100);
             }
             return 1;
         };
+
+//        plugTask(dataSourceCFT, dataSourceReceiver, opers, vidDebts);
 
         for (int i = 0; i < countTasks; i++) {
             setOfTasks.add(executor.submit(taskCalcAndInsertDebts));
             log.debug("submit run index = " + i);
         }
-
-        //plugTask(dataSourceCFT, dataSourceReceiver, opers, vidDebts);
 
         try {
             log.debug("sleep for 30 sec ");
@@ -261,14 +267,25 @@ public class CalcAllDebts {
             e.printStackTrace();
         }
 
-        while (!checkSetOfTaskIsDone(setOfTasks)) {
-            try {
-                log.debug("tasks is working ");
-                Thread.sleep(30000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        while (!setOfTasks.stream().allMatch(Future::isDone)) {
+            boolean hasError = setOfTasks.stream()
+                    .filter(Future::isDone)
+                    .map(future -> {
+                        try {
+                            future.get();
+                            return null;
+                        } catch (InterruptedException | ExecutionException e) {
+                            return e;
+                        }
+                    })
+                    .anyMatch(Objects::nonNull);
+            if (hasError) {
+                setOfTasks.stream().filter(f -> !f.isDone()).forEach(f -> f.cancel(true));
             }
         }
+        executor.shutdown();
+
         log.debug("end of calc method");
+        log.debug("setOfTask = " + setOfTasks.size());
     }
 }

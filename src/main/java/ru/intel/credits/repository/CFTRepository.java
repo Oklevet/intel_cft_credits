@@ -13,13 +13,19 @@ public interface CFTRepository {
 
     PrCred getCred(long id);
 
+    List<PrCred> getCreds(List<Long> listIds);
+
     Map<Long, VidDebt> getAllVidDebts();
 
     Collection<VidOperDog> getAllVidOperDogs();
 
-    Collection<FactOper> getAllFOByCreds(long id);
+    Collection<FactOper> getAllFOByCred(long id);
 
-    Collection<PlanOper> getAllPOByCreds(long id);
+    Collection<PlanOper> getAllPOByCred(long id);
+
+    HashMap<Long, List<FactOper>> getAllFOByCreds(List<Long> ids);
+
+    HashMap<Long, List<PlanOper>> getAllPOByCreds(List<Long> ids);
 
     Collection<TakeInDebt> getAllTakeInDebt();
 }

@@ -14,8 +14,8 @@ public class DebtPrc extends Debt implements CalcDebtsStrategy {
     }
 
     @Override
-    public double calcDebt(PrCred cred, HashMap<Long, VidOperDog> opers, long idDebt) {
+    public long calcDebt(PrCred cred, HashMap<Long, VidOperDog> opers, long idDebt) {
         DebtSimple debt = new DebtSimple(cred.getCollectionDebts(), idDebt);
-        return (double) 0 + debt.calcDebt(cred, opers, idDebt);
+        return debt.calcDebt(cred, opers, idDebt);
     }
 }

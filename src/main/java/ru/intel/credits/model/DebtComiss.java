@@ -13,7 +13,7 @@ public class DebtComiss extends Debt implements CalcDebtsStrategy {
     }
 
     @Override
-    public double calcDebt(PrCred cred, HashMap<Long, VidOperDog> opers, long idDebt) {
-        return (double) 0;
+    public long calcDebt(PrCred cred, HashMap<Long, VidOperDog> opers, long idDebt) {
+        return 0L;
     }
 }

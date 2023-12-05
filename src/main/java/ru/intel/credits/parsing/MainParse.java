@@ -26,6 +26,7 @@ public class MainParse {
             cftInsert10k.insertParseData("pr_cred.json", dataSourceCFT, "public");
             cftInsert10k.insertParseData("fact_oper.json", dataSourceCFT, "public");
             cftInsert10k.insertParseData("plan_oper.json", dataSourceCFT, "public");
+//            cftInsert10k.insertParseData("pr_cred_test.json", dataSourceCFT, "public");
         } catch (Exception e) {
             e.printStackTrace();
         }

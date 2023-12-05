@@ -12,9 +12,10 @@ import java.lang.invoke.MethodHandles;
 import java.sql.*;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @RequiredArgsConstructor
-public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository {
+public class SqlRecieveDBRepository implements Connect2DB, RecieveDBRepository {
 
     @NonNull
     private final DataSource dataSource;
@@ -48,11 +49,12 @@ public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository
         int countBatch = 0;
         try {
             PreparedStatement statement = connection.prepareStatement("""
-                      INSERT INTO PR_CRED (NUM_DOG, DEBTS) VALUES (?, ?)""");
+                      INSERT INTO PR_CRED (ID, NUM_DOG, DEBTS) VALUES (?, ?, ?)""");
 
             for (PrCred cred : creds) {
-                statement.setString(1, cred.getNumDog());
-                statement.setLong(2, cred.getCollectionDebts());
+                statement.setLong(1, cred.getId());
+                statement.setString(2, cred.getNumDog());
+                statement.setLong(3, cred.getCollectionDebts());
 
                 statement.addBatch();
                 countBatch++;
@@ -101,15 +103,15 @@ public class Sql2oRecieveDBRepository implements Connect2DB, RecieveDBRepository
      * 2. Пожертвовать уникальность collection_id, что не сильно критично, для реализации буферного запроса для большой пачки кредитов
      */
     @Override
-    public Integer getSequence() {
+    public AtomicLong getSequence() {
         Connection connection = initConnection(dataSource);
-        int result = 0;
+        AtomicLong result = new AtomicLong();
         try {
             ResultSet rs = connection.createStatement()
                     .executeQuery("select nextval('serial');");
             rs.next();
 
-            result = rs.getInt(1);
+            result = new AtomicLong(rs.getLong(1));
         } catch (SQLException e) {
             LOG.error("При получении сиквенсера БД получателя произошла ошибка: " + e.fillInStackTrace());
         } finally {

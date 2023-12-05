@@ -2,16 +2,28 @@ package ru.intel.credits.repository;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.postgresql.jdbc.PgArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sql2o.Query;
+import org.sql2o.Sql2o;
 import ru.intel.credits.configuration.Connect2DB;
 import ru.intel.credits.configuration.DataSource;
+import ru.intel.credits.configuration.DatasourceConfiguration;
 import ru.intel.credits.model.*;
+import ru.intel.credits.parsing.repository.CFTInsert10k;
 
 import java.lang.invoke.MethodHandles;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.lang.Math.round;
+import static ru.intel.credits.parsing.repository.CFTInsert10k.getQuestMark;
 
 @RequiredArgsConstructor
 public class SqlCFTRepository implements Connect2DB, CFTRepository {
@@ -89,23 +101,54 @@ public class SqlCFTRepository implements Connect2DB, CFTRepository {
         PrCred cred = new PrCred();
         try {
             PreparedStatement statement = connection
-                    .prepareStatement("select  pr.c_NUM_DOG, pr.C_FT_CREDIT, pr.c_LIST_PAY, pr.c_LIST_PLAN_PAY "
+                    .prepareStatement("select  pr.ID, pr.c_NUM_DOG, pr.C_FT_CREDIT, pr.c_LIST_PAY, pr.c_LIST_PLAN_PAY "
                                         + "from   \"Z#PR_CRED\" pr "
                                         + "where  pr.id = (?);");
             statement.setLong(1, id);
             ResultSet rs = statement.executeQuery();
             rs.next();
 
-            cred.setNumDog(rs.getString(1));
-            cred.setVal(rs.getString(2));
-            cred.setCollectionFO(rs.getLong(3));
-            cred.setCollectionPO(rs.getLong(4));
+            cred.setId(rs.getLong(1));
+            cred.setNumDog(rs.getString(2));
+            cred.setVal(rs.getString(3));
+            cred.setCollectionFO(rs.getLong(4));
+            cred.setCollectionPO(rs.getLong(5));
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closeCon(connection);
         }
         return cred;
+    }
+
+    @Override
+    public List<PrCred> getCreds(List<Long> listIds) {
+        List<PrCred> creds = new ArrayList<>();
+        Connection connection = initConnection(dataSource);
+        try {
+            String sql = String.format("select  pr.ID, pr.c_NUM_DOG, pr.C_FT_CREDIT, pr.c_LIST_PAY, pr.c_LIST_PLAN_PAY "
+                    + "from   \"Z#PR_CRED\" pr "
+                    + "where  pr.id in (" + StringUtils.join(listIds, ',') + ");");
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+
+            while (rs.next()) {
+                PrCred cred = new PrCred();
+                cred.setId(rs.getLong(1));
+                cred.setNumDog(rs.getString(2));
+                cred.setVal(rs.getString(3));
+                cred.setCollectionFO(rs.getLong(4));
+                cred.setCollectionPO(rs.getLong(5));
+                cred.setListPO(new ArrayList<>());
+                cred.setListFO(new ArrayList<>());
+                creds.add(cred);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeCon(connection);
+        }
+        return creds;
     }
 
     @Override
@@ -148,7 +191,7 @@ public class SqlCFTRepository implements Connect2DB, CFTRepository {
     }
 
     @Override
-    public List<FactOper> getAllFOByCreds(long id) {
+    public List<FactOper> getAllFOByCred(long id) {
         Connection connection = initConnection(dataSource);
         List<FactOper> opers = new ArrayList<>(List.of());
         //LOG.debug("ID = " + id);
@@ -167,7 +210,7 @@ public class SqlCFTRepository implements Connect2DB, CFTRepository {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                opers.add(new FactOper(rs.getDouble(1), rs.getLong(2), rs.getLong(3),
+                opers.add(new FactOper(round(rs.getDouble(1) * 100), rs.getLong(2), rs.getLong(3),
                         rs.getLong(4), rs.getLong(5)));
             }
         } catch (Exception e) {
@@ -179,7 +222,7 @@ public class SqlCFTRepository implements Connect2DB, CFTRepository {
     }
 
     @Override
-    public List<PlanOper> getAllPOByCreds(long id) {
+    public Collection<PlanOper> getAllPOByCred(long id) {
         Connection connection = initConnection(dataSource);
         List<PlanOper> opers = new ArrayList<>(List.of());
         try {
@@ -189,8 +232,7 @@ public class SqlCFTRepository implements Connect2DB, CFTRepository {
                     + "where fo.collection_id in ("
                     +        "select pr.c_LIST_PLAN_PAY "
                     +        "from   \"Z#PR_CRED\" pr "
-                    +        "where  pr.C_COM_STATUS = 'WORK' "
-                    + "              and pr.id = ?) "
+                    +        "where  pr.id = ?) "
                     + "and fo.c_DATE < current_date + 1 "
                     + "and fo.c_OPER = v.id"
             );
@@ -198,8 +240,73 @@ public class SqlCFTRepository implements Connect2DB, CFTRepository {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                opers.add(new PlanOper(rs.getDouble(1), rs.getLong(2), rs.getLong(3),
+                opers.add(new PlanOper(round(rs.getDouble(1) * 100), rs.getLong(2), rs.getLong(3),
                         rs.getLong(4), rs.getLong(5)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeCon(connection);
+        }
+        return opers;
+    }
+
+    @Override
+    public HashMap<Long, List<FactOper>> getAllFOByCreds(List<Long> ids) {
+        HashMap<Long, List<FactOper>> opers = new HashMap<>();
+        Connection connection = initConnection(dataSource);
+        opers = new HashMap<>();
+        try {
+            PreparedStatement statement = connection.prepareStatement(""
+                    + "select fo.c_SUMMA, fo.c_OPER, v.c_VID_DEBT, v.c_VID_DEBT_DT, fo.collection_id "
+                    + "from \"Z#FACT_OPER\" fo, \"Z#VID_OPER_DOG\" v "
+                    + "where fo.collection_id in ("
+                    + "select pr.c_LIST_PAY "
+                    + "from   \"Z#PR_CRED\" pr "
+                    + "where  pr.id in (" + StringUtils.join(ids, ',') + ")) "
+                    + "and fo.c_DATE < current_date + 1 "
+                    + "and fo.c_OPER = v.id"
+            );
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                FactOper po = new FactOper(round(rs.getDouble(1) * 100), rs.getLong(2),
+                        rs.getLong(3), rs.getLong(4), rs.getLong(5));
+                opers.merge(rs.getLong(5),
+                        new ArrayList<FactOper>(Arrays.asList(po)),
+                        (prev, pres) -> Stream.concat(prev.stream(), Stream.of(po)).collect(Collectors.toList()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeCon(connection);
+        }
+        return opers;
+    }
+
+    @Override
+    public HashMap<Long, List<PlanOper>> getAllPOByCreds(List<Long> ids) {
+        Connection connection = initConnection(dataSource);
+        HashMap<Long, List<PlanOper>> opers = new HashMap<>();
+        String sql = (""
+                + "select fo.c_SUMMA, fo.c_OPER, v.c_VID_DEBT, v.c_VID_DEBT_DT, fo.collection_id "
+                + "from \"Z#PLAN_OPER\" fo, \"Z#VID_OPER_DOG\" v "
+                + "where fo.collection_id in ("
+                + "select pr.c_LIST_PLAN_PAY "
+                + "from   \"Z#PR_CRED\" pr "
+                + "where  pr.id in (" + StringUtils.join(ids, ',') + ")) "
+                + "and fo.c_DATE < current_date + 1 "
+                + "and fo.c_OPER = v.id"
+        );
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                PlanOper po = new PlanOper(round(rs.getDouble(1) * 100), rs.getLong(2),
+                        rs.getLong(3), rs.getLong(4), rs.getLong(5));
+                opers.merge(rs.getLong(5),
+                        new ArrayList<PlanOper>(Arrays.asList(po)),
+                        (prev, pres) -> Stream.concat(prev.stream(), Stream.of(po)).collect(Collectors.toList()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -215,16 +322,15 @@ public class SqlCFTRepository implements Connect2DB, CFTRepository {
         Set<TakeInDebt> opers = new HashSet<TakeInDebt>();
         try {
             PreparedStatement statement = connection.prepareStatement(""
-                    + "select d.c_debt, d.c_DT, d.collection_id "
+                    + "select d.C_debt, d.C_DT, d.collection_id "
                     + "from \"Z#TAKE_IN_DEBT\" d "
                     + "where d.collection_id in ("
-                    +        "select v.c_TAKE_DEBT "
+                    +        "select v.C_TAKE_DEBT "
                     +        "from   \"Z#VID_OPER_DOG\" v) ");
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                opers.add(new TakeInDebt(rs.getLong(1), rs.getBoolean(2),
-                        rs.getLong(3)));
+                opers.add(new TakeInDebt(rs.getLong(1), rs.getBoolean(2), rs.getLong(3)));
             }
         } catch (SQLException e) {
             e.printStackTrace();

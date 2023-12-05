@@ -6,5 +6,5 @@ import ru.intel.credits.model.VidOperDog;
 import java.util.HashMap;
 
 public interface CalcDebtsStrategy {
-    public double calcDebt(PrCred cred, HashMap<Long, VidOperDog> opers, long idDebt);
+    public long calcDebt(PrCred cred, HashMap<Long, VidOperDog> opers, long idDebt);
 }

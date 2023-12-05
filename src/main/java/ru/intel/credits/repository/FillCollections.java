@@ -4,6 +4,8 @@ import ru.intel.credits.model.*;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class FillCollections implements FillCollectionOfModel {
 
@@ -25,5 +27,23 @@ public class FillCollections implements FillCollectionOfModel {
 
         opers.forEach(x -> opersMap.put(x.getId(), x));
         return opersMap;
+    }
+
+    /**
+     * Получение плановых и фактических операций по каждому кредиту из коллекции creds из мап foOpers и poOpers
+     * @param creds - колекция кредитов по обрабатываемому саблисту в рамках таска экзекьютора
+     * @param foOpers - мапа с фактическими операциями по саблисту кредитов
+     * @param poOpers - мапа с плановыми операциями по саблисту кредитов
+     * @return список кредитов
+     */
+    public List<PrCred> fillFoPoDebtInCreds(List<PrCred> creds, HashMap<Long, List<FactOper>> foOpers,
+                                            HashMap<Long, List<PlanOper>> poOpers, long seqId) {
+        AtomicLong sequencerID = new AtomicLong(seqId);
+        creds.stream().forEach(x -> {
+            x.setListFO(foOpers.getOrDefault(x.getCollectionFO(), x.getListFO()));
+            x.setListPO(poOpers.getOrDefault(x.getCollectionPO(), x.getListPO()));
+            x.setCollectionDebts(sequencerID.getAndIncrement());
+        });
+        return creds;
     }
 }

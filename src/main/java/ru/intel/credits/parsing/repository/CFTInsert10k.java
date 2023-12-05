@@ -37,7 +37,7 @@ public class CFTInsert10k implements Connect2DB {
         }
     }
 
-    private static String getQuestMark(int cntMarks) {
+    public static String getQuestMark(int cntMarks) {
         StringJoiner sj = new StringJoiner(", ");
         for (int i = 0; i < cntMarks; i++) {
             sj.add("?");
@@ -70,17 +70,15 @@ public class CFTInsert10k implements Connect2DB {
         int countBatch = 0;
         String tablePrefix = "Z#";
 
-        ResultSet rsTables = meta.getTables(catalog, schemaPattern, tablePrefix +
-                splitFilepath[0].toUpperCase(), types);
+        ResultSet rsTables = meta.getTables(catalog, schemaPattern, tablePrefix
+                + splitFilepath[0].toUpperCase(), types);
 
         while (rsTables.next()) {
-            System.out.println(rsTables.getString(3));
             String tableName = rsTables.getString(3);
             String columnNamePattern = null;
             ResultSet rsColumns = meta.getColumns(catalog, schemaPattern, tableName, columnNamePattern);
 
             while (rsColumns.next()) {
-                System.out.println(rsColumns.getString("COLUMN_NAME"));
                 mapAttrs.put(rsColumns.getString("COLUMN_NAME"), rsColumns.getString("TYPE_NAME"));
             }
             break;

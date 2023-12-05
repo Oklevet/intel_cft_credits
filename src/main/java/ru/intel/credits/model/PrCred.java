@@ -1,8 +1,7 @@
 package ru.intel.credits.model;
 
 import lombok.*;
-
-import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,6 +9,8 @@ import java.util.ArrayList;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 public class PrCred {
+
+    private long id;
 
     @EqualsAndHashCode.Include
     private String numDog;
@@ -21,9 +22,9 @@ public class PrCred {
 
     private long collectionPO;
 
-    private ArrayList<FactOper> listFO;
+    private List<FactOper> listFO;
 
-    private ArrayList<PlanOper> listPO;
+    private List<PlanOper> listPO;
 
     private long collectionDebts;
 }

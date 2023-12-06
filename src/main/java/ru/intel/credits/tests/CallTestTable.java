@@ -11,7 +11,6 @@ import org.sql2o.Query;
 import org.sql2o.Sql2o;
 import ru.intel.credits.configuration.Connect2DB;
 import ru.intel.credits.configuration.DataSource;
-import ru.intel.credits.configuration.DatasourceConfiguration;
 import ru.intel.credits.model.PrCred;
 import ru.intel.credits.repository.SqlCFTRepository;
 
@@ -54,7 +53,8 @@ public class CallTestTable implements Connect2DB {
 
     public List<PrCred> getCredsSql2O(List<Long> listIds) {
         List<PrCred> creds = new ArrayList<>();
-        final Map<String, String> COLUMN_MAPPING = Map.of(
+        //Удалён файл конфигуратор
+       /* final Map<String, String> COLUMN_MAPPING = Map.of(
                 "ID", "id",
                 "c_NUM_DOG", "numDog",
                 "C_FT_CREDIT", "val",
@@ -77,7 +77,7 @@ public class CallTestTable implements Connect2DB {
         creds.forEach(x -> {
             x.setListPO(new ArrayList<>());
             x.setListFO(new ArrayList<>());
-        });
+        });*/
         return creds;
     }
 

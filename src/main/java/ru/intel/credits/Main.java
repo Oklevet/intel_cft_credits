@@ -28,7 +28,7 @@ public class Main {
                 "asd1");
 
         try {
-            CalcAllDebts.calcAllCreds(dataSourceCFT, dataSourceReceiver, 25);
+            CalcAllDebts.calcAllCreds(dataSourceCFT, dataSourceReceiver, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }

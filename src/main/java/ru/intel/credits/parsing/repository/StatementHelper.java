@@ -3,8 +3,6 @@ package ru.intel.credits.parsing.repository;
 import lombok.NoArgsConstructor;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

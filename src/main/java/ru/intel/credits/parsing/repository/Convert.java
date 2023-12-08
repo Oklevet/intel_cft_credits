@@ -1,13 +1,7 @@
 package ru.intel.credits.parsing.repository;
 
 import org.aspectj.util.FileUtil;
-import org.springframework.util.FileCopyUtils;
-import ru.intel.credits.configuration.DataSource;
-import ru.intel.credits.parsing.repository.CFTInsert10k;
-import ru.intel.credits.parsing.repository.CFTInsert10kReadSplit;
-
 import java.io.*;
-import java.net.URL;
 
 public class Convert {
 

@@ -41,3 +41,20 @@ where p.debts = d.collection_id
 select sum(d.summa) from debts d, pr_cred p
 where p.debts = d.collection_id
         and d.summa != 0
+--                  sublist 100                         sublist 1000
+-- 1thrds       1 try       -114 sec                        -63
+--              7688        7688
+--              302130      302130
+
+
+-- 2thrds       1 try       -60 sec                         -39
+--              7688        7688
+--              302130     302130   302130
+
+-- 5thrds       1 try       -42 sec                         -31
+--              7688        7688
+--              302130      302130
+
+-- 20thrds      1 try       -36 sec
+--              7688        7688
+--              302130      302130

@@ -2,24 +2,16 @@ package ru.intel.credits.tests;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.sql2o.Query;
-import org.sql2o.Sql2o;
 import ru.intel.credits.configuration.Connect2DB;
 import ru.intel.credits.configuration.DataSource;
 import ru.intel.credits.model.PrCred;
-import ru.intel.credits.repository.SqlCFTRepository;
 
 import java.lang.invoke.MethodHandles;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor

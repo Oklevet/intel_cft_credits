@@ -3,27 +3,20 @@ package ru.intel.credits.repository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.postgresql.jdbc.PgArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sql2o.Query;
-import org.sql2o.Sql2o;
 import ru.intel.credits.configuration.Connect2DB;
 import ru.intel.credits.configuration.DataSource;
-import ru.intel.credits.configuration.DatasourceConfiguration;
 import ru.intel.credits.model.*;
-import ru.intel.credits.parsing.repository.CFTInsert10k;
 
 import java.lang.invoke.MethodHandles;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.Math.round;
-import static ru.intel.credits.parsing.repository.CFTInsert10k.getQuestMark;
 
 @RequiredArgsConstructor
 public class SqlCFTRepository implements Connect2DB, CFTRepository {

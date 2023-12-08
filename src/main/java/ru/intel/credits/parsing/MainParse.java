@@ -2,7 +2,6 @@ package ru.intel.credits.parsing;
 
 import ru.intel.credits.configuration.DataSource;
 import ru.intel.credits.parsing.repository.CFTInsert10k;
-import ru.intel.credits.parsing.repository.CFTInsert10kReadSplit;
 
 public class MainParse {
 
